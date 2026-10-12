@@ -1,0 +1,40 @@
+{
+  "pipeline_name": "ChEMBL 37 Scientific Bioactivity & Interaction Curation",
+  "timestamp": "2026-10-12 11:11:55",
+  "chembl_release": "chembl_37",
+  "database_source": "data/raw/chembl_37.db",
+  "files_generated": {
+    "bioactivity_master": "data/curated/chembl_37_bioactivity_broad.tsv.gz",
+    "tiered_interactions": "data/curated/chembl_37_compound_target_interactions_tiered.tsv.gz",
+    "target_components": "data/curated/chembl_37_target_components.tsv",
+    "target_variants": "data/curated/chembl_37_target_variants.tsv",
+    "drug_dictionary": "data/curated/chembl_37_drug_dictionary.tsv",
+    "protein_classification": "data/curated/chembl_37_protein_classification.tsv",
+    "summary_report": "reports/chembl_37_curation_summary.md"
+  },
+  "metrics_summary": {
+    "bio_total_records": 23195772,
+    "bio_unique_compounds": 2739887,
+    "bio_unique_targets": 16689,
+    "bio_unique_assays": 1610677,
+    "bio_unique_documents": 99455,
+    "bio_records_with_pchembl": 4969278,
+    "bio_records_with_smiles": 22975195,
+    "bio_pct_with_pchembl": "21.4%",
+    "interaction_total_pairs": 16891411,
+    "interaction_unique_compounds": 2739887,
+    "interaction_unique_targets": 16689,
+    "interaction_with_mutations": 79075,
+    "interaction_with_curated_moa": 8649,
+    "tier_A_interactions": 3997396,
+    "tier_B_interactions": 3865223,
+    "tier_C_interactions": 523324,
+    "tier_D_interactions": 8396106,
+    "tier_E_interactions": 109362,
+    "n_target_components": 17617,
+    "n_target_variants": 3127,
+    "n_clinical_drugs": 16907,
+    "n_protein_classes": 905,
+    "report_timestamp": "2026-10-12 11:11:55"
+  }
+}

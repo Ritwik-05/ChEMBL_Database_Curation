@@ -1,0 +1,24 @@
+metric	value
+bio_pct_with_pchembl	21.4%
+bio_records_with_pchembl	4969278
+bio_records_with_smiles	22975195
+bio_total_records	23195772
+bio_unique_assays	1610677
+bio_unique_compounds	2739887
+bio_unique_documents	99455
+bio_unique_targets	16689
+interaction_total_pairs	16891411
+interaction_unique_compounds	2739887
+interaction_unique_targets	16689
+interaction_with_curated_moa	8649
+interaction_with_mutations	79075
+n_clinical_drugs	16907
+n_protein_classes	905
+n_target_components	17617
+n_target_variants	3127
+report_timestamp	2026-10-12 11:11:55
+tier_A_interactions	3997396
+tier_B_interactions	3865223
+tier_C_interactions	523324
+tier_D_interactions	8396106
+tier_E_interactions	109362

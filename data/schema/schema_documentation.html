@@ -1,0 +1,1763 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="eng"><head><link rel="stylesheet" href="https://www.ebi.ac.uk/inc/css/contents.css" type="text/css" /><link rel="stylesheet" href="https://www.ebi.ac.uk/inc/css/userstyles.css" type="text/css" />  </head>
+<body>
+<h1>chembl_37 Schema Documentation</h1>
+
+    <p><h2>ACTION_TYPE:</h2>
+    Table storing the distinct list of action types used in the drug_mechanism table, together with a higher-level parent action type.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>ACTION_TYPE</TD><TD>VARCHAR2(50)</TD><TD>NOT NULL</TD><TD>Primary key. Type of action of the drug e.g., agonist, antagonist</TD></TR>
+        
+            <TR><TD></TD><TD>DESCRIPTION</TD><TD>VARCHAR2(200)</TD><TD>NOT NULL</TD><TD>Description of how the action type is used</TD></TR>
+        
+            <TR><TD></TD><TD>PARENT_TYPE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Higher-level grouping of action types describing the overall effect on the target e.g., positive vs negative modulator. For example, the AGONIST action type would be classed as POSITIVE MODULATOR, the INHIBITOR action type as NEGATIVE MODULATOR, and the BINDING AGENT action type as OTHER since the overall effect on the target is not specified.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ACTIVITIES:</h2>
+    Activity 'values' or 'end points'  that are the results of an assay recorded in a scientific document. Each activity is described by a row.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>ACTIVITY_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Unique ID for the activity row</TD></TR>
+        
+            <TR><TD>FK</TD><TD>ASSAY_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the assays table (containing the assay description)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>DOC_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to documents table (for quick lookup of publication details - can also link to documents through compound_records or assays table)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>RECORD_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the compound_records table (containing information on the compound tested)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to compounds table (for quick lookup of compound structure - can also link to compounds through compound_records table)</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_RELATION</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Symbol constraining the activity value (e.g. >, <, =)</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_VALUE</TD><TD>NUMBER</TD><TD></TD><TD>Same as PUBLISHED_VALUE but transformed to common units: e.g. mM concentrations converted to nM.</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_UNITS</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Selected 'Standard' units for data type: e.g. concentrations are in nM.</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_FLAG</TD><TD>NUMBER</TD><TD></TD><TD>Shows whether the standardised columns have been curated/set (1) or just default to the published data (0).</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_TYPE</TD><TD>VARCHAR2(250)</TD><TD></TD><TD>Standardised version of the published_activity_type (e.g. IC50 rather than Ic-50/Ic50/ic50/ic-50)</TD></TR>
+        
+            <TR><TD></TD><TD>ACTIVITY_COMMENT</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>Supplementary information about the measurement. This field should be used to record other information related to the activity data that is supplementary to the overall outcome (e.g. antagonist, poor curve fitting, etc.)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>DATA_VALIDITY_COMMENT</TD><TD>VARCHAR2(30)</TD><TD></TD><TD>Comment reflecting whether the values for this activity measurement are likely to be correct - one of 'Manually validated' (checked original paper and value is correct), 'Potential author error' (value looks incorrect but is as reported in the original paper), 'Outside typical range' (value seems too high/low to be correct e.g., negative IC50 value), 'Non standard unit type' (units look incorrect for this activity type).</TD></TR>
+        
+            <TR><TD></TD><TD>POTENTIAL_DUPLICATE</TD><TD>NUMBER</TD><TD></TD><TD>When set to 1, indicates that the value is likely to be a repeat citation of a value reported in a previous ChEMBL paper, rather than a new, independent measurement. Note: value of zero does not guarantee that the measurement is novel/independent though</TD></TR>
+        
+            <TR><TD></TD><TD>PCHEMBL_VALUE</TD><TD>NUMBER</TD><TD></TD><TD>Negative log of selected concentration-response activity values (IC50/EC50/XC50/AC50/Ki/Kd/Potency)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>BAO_ENDPOINT</TD><TD>VARCHAR2(11)</TD><TD></TD><TD>ID for the corresponding result type in BioAssay Ontology (based on standard_type)</TD></TR>
+        
+            <TR><TD></TD><TD>UO_UNITS</TD><TD>VARCHAR2(10)</TD><TD></TD><TD>ID for the corresponding unit in Unit Ontology (based on standard_units)</TD></TR>
+        
+            <TR><TD></TD><TD>QUDT_UNITS</TD><TD>VARCHAR2(70)</TD><TD></TD><TD>ID for the corresponding unit in QUDT Ontology (based on standard_units)</TD></TR>
+        
+            <TR><TD></TD><TD>TOID</TD><TD>INTEGER</TD><TD></TD><TD>The Test Occasion Identifier, used to group together related activity measurements</TD></TR>
+        
+            <TR><TD></TD><TD>UPPER_VALUE</TD><TD>NUMBER</TD><TD></TD><TD>Where the activity is a range, this represents the highest value of the range (numerically), while the PUBLISHED_VALUE column represents the lower value</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_UPPER_VALUE</TD><TD>NUMBER</TD><TD></TD><TD>Where the activity is a range, this represents the standardised version of the highest value of the range (with the lower value represented by STANDARD_VALUE)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>SRC_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to source table, indicating the source of the activity value</TD></TR>
+        
+            <TR><TD></TD><TD>TYPE</TD><TD>VARCHAR2(250)</TD><TD>NOT NULL</TD><TD>Type of end-point measurement: e.g. IC50, LD50, %inhibition etc, as it appears in the original dataset</TD></TR>
+        
+            <TR><TD></TD><TD>RELATION</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Symbol constraining the activity value (e.g. >, <, =), as it appears in the original dataset</TD></TR>
+        
+            <TR><TD></TD><TD>VALUE</TD><TD>NUMBER</TD><TD></TD><TD>Datapoint value as it appears in the original dataset.</TD></TR>
+        
+            <TR><TD></TD><TD>UNITS</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Units of measurement as they appear in the original dataset</TD></TR>
+        
+            <TR><TD></TD><TD>TEXT_VALUE</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Non-numeric activities describing the overall assay outcome i.e. "Slightly active", "Not determined", "Toxic", "Active", "Inactive", "No effect"</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_TEXT_VALUE</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Standardized version of additional information about the measurement</TD></TR>
+        
+            <TR><TD>FK</TD><TD>ACTION_TYPE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Foreign key to action_type table; specifies the effect of the compound on its target.</TD></TR>
+        
+            <TR><TD></TD><TD>MODALITY</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Annotates the designed compound modality (e.g. Targeted Protein Degradation). Contrasting with the ACTION_TYPE field, a compound captured in the MODALITY field may be active or inactive at a target.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ACTIVITY_PROPERTIES:</h2>
+    Table storing parameters and properties of Activity_IDs in the ACTIVITIES table - can be either independent variables that do not apply to the whole assay (e.g., compounds 'DOSE'), or dependent variables/results that are important in interpreting the activity values (e.g., 'HILL_SLOPE')
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>AP_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Unique ID for each record.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>ACTIVITY_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>FK to ACTIVITY_ID in ACTIVITIES table.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>TYPE</TD><TD>VARCHAR2(250)</TD><TD>NOT NULL</TD><TD>The parameter or property type</TD></TR>
+        
+            <TR><TD></TD><TD>RELATION</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Symbol constraining the value (e.g. >, <, =)</TD></TR>
+        
+            <TR><TD></TD><TD>VALUE</TD><TD>NUMBER</TD><TD></TD><TD>Numberical value for the parameter or property</TD></TR>
+        
+            <TR><TD></TD><TD>UNITS</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Units of measurement</TD></TR>
+        
+            <TR><TD></TD><TD>TEXT_VALUE</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Non-numerical value of the parameter or property</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_TYPE</TD><TD>VARCHAR2(250)</TD><TD></TD><TD>Standardised form of the TYPE</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_RELATION</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Standardised form of the RELATION</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_VALUE</TD><TD>NUMBER</TD><TD></TD><TD>Standardised form of the VALUE</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_UNITS</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Standardised form of the UNITS</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_TEXT_VALUE</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Standardised form of the TEXT_VALUE</TD></TR>
+        
+            <TR><TD></TD><TD>COMMENTS</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>A Comment.</TD></TR>
+        
+            <TR><TD></TD><TD>RESULT_FLAG</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>A flag to indicate, if set to 1, that this type is a dependent variable/result (e.g., slope) rather than an independent variable/parameter (0, the default).</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ACTIVITY_SMID:</h2>
+    A join table between ACTIVITY_SUPP_MAP and ACTIVITY_SUPP
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>SMID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>FK to SMID in ACTIVITY_SUPP_MAP, and a FK to SMID in ACTIVITY_SUPP</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ACTIVITY_STDS_LOOKUP:</h2>
+    Table storing details of standardised activity types and units, with permitted value ranges. Used to determine the correct standard_type and standard_units for a range of published types/units.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>STD_ACT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>STANDARD_TYPE</TD><TD>VARCHAR2(250)</TD><TD>NOT NULL</TD><TD>The standard_type that other published_types in the activities table have been converted to.</TD></TR>
+        
+            <TR><TD></TD><TD>DEFINITION</TD><TD>VARCHAR2(500)</TD><TD></TD><TD>A description/definition of the standard_type.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>STANDARD_UNITS</TD><TD>VARCHAR2(100)</TD><TD>NOT NULL</TD><TD>The units that are applied to this standard_type and to which other published_units are converted. Note a standard_type may have more than one allowable standard_unit and therefore multiple rows in this table.</TD></TR>
+        
+            <TR><TD></TD><TD>NORMAL_RANGE_MIN</TD><TD>NUMBER</TD><TD></TD><TD>The lowest value for this activity type that is likely to be genuine. This is only an approximation, so lower genuine values may exist, but it may be desirable to validate these before using them. For a given standard_type/units, values in the activities table below this threshold are flagged with a data_validity_comment of 'Outside typical range'.</TD></TR>
+        
+            <TR><TD></TD><TD>NORMAL_RANGE_MAX</TD><TD>NUMBER</TD><TD></TD><TD>The highest value for this activity type that is likely to be genuine. This is only an approximation, so higher genuine values may exist, but it may be desirable to validate these before using them. For a given standard_type/units, values in the activities table above this threshold are flagged with a data_validity_comment of 'Outside typical range'.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ACTIVITY_SUPP:</h2>
+    Supplementary / Supporting Data for ACTIVITIES - can be linked via ACTIVITY_SMID and ACTIVITY_SUPP_MAP tables
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>AS_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Unique ID for each record.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>RGID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Record Grouping ID, used to group together related data points in this table</TD></TR>
+        
+            <TR><TD>FK</TD><TD>SMID</TD><TD>NUMBER</TD><TD></TD><TD>FK to SMID in ACTIVITY_SMID.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>TYPE</TD><TD>VARCHAR2(250)</TD><TD>NOT NULL</TD><TD>Type of end-point measurement: e.g. IC50, LD50, %inhibition etc, as it appears in the original dataset</TD></TR>
+        
+            <TR><TD></TD><TD>RELATION</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Symbol constraining the activity value (e.g. >, <, =), as it appears in the original dataset</TD></TR>
+        
+            <TR><TD></TD><TD>VALUE</TD><TD>NUMBER</TD><TD></TD><TD>Datapoint value as it appears in the original dataset.</TD></TR>
+        
+            <TR><TD></TD><TD>UNITS</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Units of measurement as they appear in the original dataset</TD></TR>
+        
+            <TR><TD></TD><TD>TEXT_VALUE</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Non-numeric value for measurement as in original dataset</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_TYPE</TD><TD>VARCHAR2(250)</TD><TD></TD><TD>Standardised form of the TYPE</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_RELATION</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Standardised form of the RELATION</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_VALUE</TD><TD>NUMBER</TD><TD></TD><TD>Standardised form of the VALUE</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_UNITS</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Standardised form of the UNITS</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_TEXT_VALUE</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Standardised form of the TEXT_VALUE</TD></TR>
+        
+            <TR><TD></TD><TD>COMMENTS</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>A Comment.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ACTIVITY_SUPP_MAP:</h2>
+    Mapping table, linking supplementary / supporting data from the ACTIVITY_SUPP table to the main ACTIVITIES table
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>ACTSM_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+            <TR><TD>FK</TD><TD>ACTIVITY_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>FK to ACTIVITY_ID in ACTIVITIES table.</TD></TR>
+        
+            <TR><TD>FK</TD><TD>SMID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>FK to SMID in ACTIVITY_SMID.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ASSAY_CLASS_MAP:</h2>
+    Mapping table linking assays to classes in the ASSAY_CLASSIFICATION table
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>ASS_CLS_MAP_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>ASSAY_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key that maps to the ASSAYS table</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>ASSAY_CLASS_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key that maps to the ASSAY_CLASSIFICATION table</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ASSAY_CLASSIFICATION:</h2>
+    Classification scheme for phenotypic assays e.g., by therapeutic area, phenotype/process and assay type. Can be used to find standard assays for a particular disease area or phenotype e.g., anti-obesity assays. Currently data are available only for in vivo efficacy assays
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>ASSAY_CLASS_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+            <TR><TD></TD><TD>L1</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>High level classification e.g., by anatomical/therapeutic area</TD></TR>
+        
+            <TR><TD></TD><TD>L2</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Mid-level classification e.g., by phenotype/biological process</TD></TR>
+        
+            <TR><TD>UK</TD><TD>L3</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Fine-grained classification e.g., by assay type</TD></TR>
+        
+            <TR><TD></TD><TD>CLASS_TYPE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>The type of assay being classified e.g., in vivo efficacy</TD></TR>
+        
+            <TR><TD></TD><TD>SOURCE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Source from which the assay class was obtained</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ASSAY_PARAMETERS:</h2>
+    Table storing additional parameters for an assay e.g., dose, administration route, time point
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>ASSAY_PARAM_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Numeric primary key</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>ASSAY_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to assays table. The assay to which this parameter belongs</TD></TR>
+        
+            <TR><TD>UK</TD><TD>TYPE</TD><TD>VARCHAR2(250)</TD><TD>NOT NULL</TD><TD>The type of parameter being described, according to the original data source</TD></TR>
+        
+            <TR><TD></TD><TD>RELATION</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>The relation symbol for the parameter being described, according to the original data source</TD></TR>
+        
+            <TR><TD></TD><TD>VALUE</TD><TD>NUMBER</TD><TD></TD><TD>The value of the parameter being described, according to the original data source. Used for numeric data</TD></TR>
+        
+            <TR><TD></TD><TD>UNITS</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>The units for the parameter being described, according to the original data source</TD></TR>
+        
+            <TR><TD></TD><TD>TEXT_VALUE</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>The text value of the parameter being described, according to the original data source. Used for non-numeric/qualitative data</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_TYPE</TD><TD>VARCHAR2(250)</TD><TD></TD><TD>Standardized form of the TYPE</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_RELATION</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Standardized form of the RELATION</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_VALUE</TD><TD>NUMBER</TD><TD></TD><TD>Standardized form of the VALUE</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_UNITS</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Standardized form of the UNITS</TD></TR>
+        
+            <TR><TD></TD><TD>STANDARD_TEXT_VALUE</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>Standardized form of the TEXT_VALUE</TD></TR>
+        
+            <TR><TD></TD><TD>COMMENTS</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>Additional comments describing the parameter</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ASSAY_TYPE:</h2>
+    Description of assay types (e.g., Binding, Functional, ADMET)
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>ASSAY_TYPE</TD><TD>VARCHAR2(1)</TD><TD>NOT NULL</TD><TD>Single character representing assay type</TD></TR>
+        
+            <TR><TD></TD><TD>ASSAY_DESC</TD><TD>VARCHAR2(250)</TD><TD></TD><TD>Description of assay type</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ASSAYS:</h2>
+    Table storing a list of the assays that are reported in each document. Similar assays from different publications will appear as distinct assays in this table.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>ASSAY_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Unique ID for the assay</TD></TR>
+        
+            <TR><TD>FK</TD><TD>DOC_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to documents table</TD></TR>
+        
+            <TR><TD></TD><TD>DESCRIPTION</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>Description of the reported assay</TD></TR>
+        
+            <TR><TD>FK</TD><TD>ASSAY_TYPE</TD><TD>VARCHAR2(1)</TD><TD></TD><TD>Assay classification, e.g. B=Binding assay, A=ADME assay, F=Functional assay</TD></TR>
+        
+            <TR><TD></TD><TD>ASSAY_TEST_TYPE</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>Type of assay system (i.e., in vivo or in vitro)</TD></TR>
+        
+            <TR><TD></TD><TD>ASSAY_CATEGORY</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>screening, confirmatory (ie: dose-response), summary, panel, other,Thermal shift assay QC liability, Thermal shift assay, Affinity biochemical assay, Incucyte cell viability, Affinity phenotypic cellular assay, HTRF assay, Selectivity assay, Cell health data, NanoBRET assay, Alphascreen assay, Affinity on-target cellular assay, ITC assay, GPCR beta-arrestin recruitment assay</TD></TR>
+        
+            <TR><TD></TD><TD>ASSAY_ORGANISM</TD><TD>VARCHAR2(250)</TD><TD></TD><TD>Name of the organism for the assay system (e.g., the organism, tissue or cell line in which an assay was performed). May differ from the target organism (e.g., for a human protein expressed in non-human cells, or pathogen-infected human cells).</TD></TR>
+        
+            <TR><TD></TD><TD>ASSAY_TAX_ID</TD><TD>NUMBER</TD><TD></TD><TD>NCBI tax ID for the assay organism.</TD></TR>
+        
+            <TR><TD></TD><TD>ASSAY_STRAIN</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Name of specific strain of the assay organism used (where known)</TD></TR>
+        
+            <TR><TD></TD><TD>ASSAY_TISSUE</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Name of tissue used in the assay system (e.g., for tissue-based assays) or from which the assay system was derived (e.g., for cell/subcellular fraction-based assays).</TD></TR>
+        
+            <TR><TD></TD><TD>ASSAY_CELL_TYPE</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Name of cell type or cell line used in the assay system (e.g., for cell-based assays).</TD></TR>
+        
+            <TR><TD></TD><TD>ASSAY_SUBCELLULAR_FRACTION</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Name of subcellular fraction used in the assay system (e.g., microsomes, mitochondria).</TD></TR>
+        
+            <TR><TD>FK</TD><TD>TID</TD><TD>NUMBER</TD><TD></TD><TD>Target identifier to which this assay has been mapped. Foreign key to target_dictionary. From ChEMBL_15 onwards, an assay will have only a single target assigned.</TD></TR>
+        
+            <TR><TD>FK</TD><TD>RELATIONSHIP_TYPE</TD><TD>VARCHAR2(1)</TD><TD></TD><TD>Flag indicating of the relationship between the reported target in the source document and the assigned target from TARGET_DICTIONARY. Foreign key to RELATIONSHIP_TYPE table.</TD></TR>
+        
+            <TR><TD>FK</TD><TD>CONFIDENCE_SCORE</TD><TD>NUMBER</TD><TD></TD><TD>Confidence score, indicating how accurately the assigned target(s) represents the actually assay target. Foreign key to CONFIDENCE_SCORE table. 0 means uncurated/unassigned, 1 = low confidence to 9 = high confidence.</TD></TR>
+        
+            <TR><TD>FK</TD><TD>SRC_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to source table</TD></TR>
+        
+            <TR><TD></TD><TD>SRC_ASSAY_ID</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Identifier for the assay in the source database/deposition (e.g., pubchem AID)</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>CHEMBL_ID</TD><TD>VARCHAR2(20)</TD><TD>NOT NULL</TD><TD>ChEMBL identifier for this assay (for use on web interface etc)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>CELL_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to cell dictionary. The cell type or cell line used in the assay</TD></TR>
+        
+            <TR><TD>FK</TD><TD>BAO_FORMAT</TD><TD>VARCHAR2(11)</TD><TD></TD><TD>ID for the corresponding format type in BioAssay Ontology (e.g., cell-based, biochemical, organism-based etc)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>TISSUE_ID</TD><TD>NUMBER</TD><TD></TD><TD>ID for the corresponding tissue/anatomy in Uberon. Foreign key to tissue_dictionary</TD></TR>
+        
+            <TR><TD>FK</TD><TD>VARIANT_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to variant_sequences table. Indicates the mutant/variant version of the target used in the assay (where known/applicable)</TD></TR>
+        
+            <TR><TD></TD><TD>AIDX</TD><TD>VARCHAR2(200)</TD><TD>NOT NULL</TD><TD>The Depositor Defined Assay Identifier</TD></TR>
+        
+            <TR><TD></TD><TD>ASSAY_GROUP</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Assays deposited across multiple datasets/releases that are considered comparable by the depositor are mapped to the same ASSAY GROUP. Allows depositors to group comparable assays and users to identify assays that can be considered identical.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ATC_CLASSIFICATION:</h2>
+    WHO ATC Classification for drugs
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD></TD><TD>WHO_NAME</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>WHO/INN name for the compound</TD></TR>
+        
+            <TR><TD></TD><TD>LEVEL1</TD><TD>VARCHAR2(10)</TD><TD></TD><TD>First level of classification</TD></TR>
+        
+            <TR><TD></TD><TD>LEVEL2</TD><TD>VARCHAR2(10)</TD><TD></TD><TD>Second level of classification</TD></TR>
+        
+            <TR><TD></TD><TD>LEVEL3</TD><TD>VARCHAR2(10)</TD><TD></TD><TD>Third level of classification</TD></TR>
+        
+            <TR><TD></TD><TD>LEVEL4</TD><TD>VARCHAR2(10)</TD><TD></TD><TD>Fourth level of classification</TD></TR>
+        
+            <TR><TD>PK</TD><TD>LEVEL5</TD><TD>VARCHAR2(10)</TD><TD>NOT NULL</TD><TD>Complete ATC code for compound</TD></TR>
+        
+            <TR><TD></TD><TD>LEVEL1_DESCRIPTION</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Description of first level of classification</TD></TR>
+        
+            <TR><TD></TD><TD>LEVEL2_DESCRIPTION</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Description of second level of classification</TD></TR>
+        
+            <TR><TD></TD><TD>LEVEL3_DESCRIPTION</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Description of third level of classification</TD></TR>
+        
+            <TR><TD></TD><TD>LEVEL4_DESCRIPTION</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Description of fourth level of classification</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>BINDING_SITES:</h2>
+    Table storing details of binding sites for a target. A target may have multiple sites defined in this table.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>SITE_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key. Unique identifier for a binding site in a given target.</TD></TR>
+        
+            <TR><TD></TD><TD>SITE_NAME</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Name/label for the binding site.</TD></TR>
+        
+            <TR><TD>FK</TD><TD>TID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to target_dictionary. Target on which the binding site is found.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>BIO_COMPONENT_SEQUENCES:</h2>
+    Table storing the sequences for biotherapeutic drugs (e.g., monoclonal antibodies, recombinant proteins, peptides etc. For multi-chain biotherapeutics (e.g., mAbs) each chain is stored here as a separate component.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>COMPONENT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key. Unique identifier for each of the molecular components of biotherapeutics in ChEMBL (e.g., antibody chains, recombinant proteins, synthetic peptides).</TD></TR>
+        
+            <TR><TD></TD><TD>COMPONENT_TYPE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Type of molecular component (e.g., 'Protein', 'Nucleic Acid'). The component type can be NULL for post-translational modifications such as the location of disulfide bridges, N-terminal glycosylation sites and C-terminal lysine clipping.</TD></TR>
+        
+            <TR><TD></TD><TD>DESCRIPTION</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Description/name of molecular component.</TD></TR>
+        
+            <TR><TD></TD><TD>SEQUENCE</TD><TD>CLOB</TD><TD></TD><TD>Sequence of the biotherapeutic component.</TD></TR>
+        
+            <TR><TD></TD><TD>SEQUENCE_MD5SUM</TD><TD>VARCHAR2(32)</TD><TD></TD><TD>MD5 checksum of the sequence.</TD></TR>
+        
+            <TR><TD></TD><TD>TAX_ID</TD><TD>NUMBER</TD><TD></TD><TD>NCBI tax ID for the species from which the sequence is derived. May be null for humanized monoclonal antibodies, synthetic peptides etc.</TD></TR>
+        
+            <TR><TD></TD><TD>ORGANISM</TD><TD>VARCHAR2(150)</TD><TD></TD><TD>Name of the species from which the sequence is derived.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>BIOASSAY_ONTOLOGY:</h2>
+    Lookup table providing labels for Bioassay Ontology terms used in assays and activities tables
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>BAO_ID</TD><TD>VARCHAR2(11)</TD><TD>NOT NULL</TD><TD>Bioassay Ontology identifier (BAO version 2.0)</TD></TR>
+        
+            <TR><TD></TD><TD>LABEL</TD><TD>VARCHAR2(100)</TD><TD>NOT NULL</TD><TD>Bioassay Ontology label for the term (BAO version 2.0)</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>BIOTHERAPEUTIC_COMPONENTS:</h2>
+    Links each biotherapeutic drug (in the biotherapeutics table) to its component sequences (in the bio_component_sequences table). A biotherapeutic drug can have multiple components and hence multiple rows in this table. Similarly, a particular component sequence can be part of more than one drug.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>BIOCOMP_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the biotherapeutics table, indicating which biotherapeutic the component is part of.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>COMPONENT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the bio_component_sequences table, indicating which component is part of the biotherapeutic.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>BIOTHERAPEUTICS:</h2>
+    Table mapping biotherapeutics (e.g. recombinant proteins, peptides and antibodies) to the molecule_dictionary table. Includes HELM notation where available.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK,FK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to molecule_dictionary</TD></TR>
+        
+            <TR><TD></TD><TD>DESCRIPTION</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Description of the biotherapeutic.</TD></TR>
+        
+            <TR><TD></TD><TD>HELM_NOTATION</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>Sequence notation generated according to the HELM standard (http://www.openhelm.org/home). Currently for peptides only</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>CELL_DICTIONARY:</h2>
+    Table storing information for cell lines in the target_dictionary (e.g., tissue/species origin). Cell_name should match pref_name in target_dictionary.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>CELL_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key. Unique identifier for each cell line in the target_dictionary.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>CELL_NAME</TD><TD>VARCHAR2(50)</TD><TD>NOT NULL</TD><TD>Name of each cell line (as used in the target_dicitonary pref_name).</TD></TR>
+        
+            <TR><TD></TD><TD>CELL_DESCRIPTION</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Longer description (where available) of the cell line.</TD></TR>
+        
+            <TR><TD></TD><TD>CELL_SOURCE_TISSUE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Tissue from which the cell line is derived, where known.</TD></TR>
+        
+            <TR><TD></TD><TD>CELL_SOURCE_ORGANISM</TD><TD>VARCHAR2(150)</TD><TD></TD><TD>Name of organism from which the cell line is derived.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>CELL_SOURCE_TAX_ID</TD><TD>NUMBER</TD><TD></TD><TD>NCBI tax ID of the organism from which the cell line is derived.</TD></TR>
+        
+            <TR><TD></TD><TD>CLO_ID</TD><TD>VARCHAR2(11)</TD><TD></TD><TD>ID for the corresponding cell line in Cell Line Ontology</TD></TR>
+        
+            <TR><TD></TD><TD>EFO_ID</TD><TD>VARCHAR2(12)</TD><TD></TD><TD>ID for the corresponding cell line in Experimental Factory Ontology</TD></TR>
+        
+            <TR><TD></TD><TD>CELLOSAURUS_ID</TD><TD>VARCHAR2(15)</TD><TD></TD><TD>ID for the corresponding cell line in Cellosaurus Ontology</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>CHEMBL_ID</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>ChEMBL identifier for the cell (used in web interface etc)</TD></TR>
+        
+            <TR><TD></TD><TD>CELL_ONTOLOGY_ID</TD><TD>VARCHAR2(10)</TD><TD></TD><TD>ID for the corresponding cell type in the Cell Ontology</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>CHEMBL_ID_LOOKUP:</h2>
+    Lookup table storing chembl identifiers for different entities in the database (assays, compounds, documents and targets)
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>CHEMBL_ID</TD><TD>VARCHAR2(20)</TD><TD>NOT NULL</TD><TD>ChEMBL identifier</TD></TR>
+        
+            <TR><TD>UK</TD><TD>ENTITY_TYPE</TD><TD>VARCHAR2(50)</TD><TD>NOT NULL</TD><TD>Type of entity (e.g., COMPOUND, ASSAY, TARGET)</TD></TR>
+        
+            <TR><TD>UK</TD><TD>ENTITY_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key for that entity in corresponding table (e.g., molregno for compounds, tid for targets)</TD></TR>
+        
+            <TR><TD></TD><TD>STATUS</TD><TD>VARCHAR2(10)</TD><TD>NOT NULL</TD><TD>Indicates whether the status of the entity within the database - ACTIVE, INACTIVE (downgraded), OBS (obsolete/removed).</TD></TR>
+        
+            <TR><TD></TD><TD>LAST_ACTIVE</TD><TD>NUMBER</TD><TD></TD><TD>indicates the last ChEMBL version where the CHEMBL_ID was active</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>CHEMBL_RELEASE:</h2>
+    Table listing ChEMBL releases with their creation dates
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>CHEMBL_RELEASE_ID</TD><TD>INTEGER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+            <TR><TD></TD><TD>CHEMBL_RELEASE</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>ChEMBL release name</TD></TR>
+        
+            <TR><TD></TD><TD>CREATION_DATE</TD><TD>DATE</TD><TD></TD><TD>ChEMBL release creation date</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>COMPONENT_CLASS:</h2>
+    Links protein components of targets to the protein_family_classification table. A protein can have more than one classification (e.g., Membrane receptor and Enzyme).
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>COMPONENT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to component_sequences table.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>PROTEIN_CLASS_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the protein_classification table.</TD></TR>
+        
+            <TR><TD>PK</TD><TD>COMP_CLASS_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>COMPONENT_DOMAINS:</h2>
+    Links protein components of targets to the structural domains they contain (from the domains table). Contains information showing the start and end position of the domain in the component sequence.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>COMPD_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>DOMAIN_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to the domains table, indicating the domain that is contained in the associated molecular component.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>COMPONENT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the component_sequences table, indicating the molecular_component that has the given domain.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>START_POSITION</TD><TD>NUMBER</TD><TD></TD><TD>Start position of the domain within the sequence given in the component_sequences table.</TD></TR>
+        
+            <TR><TD></TD><TD>END_POSITION</TD><TD>NUMBER</TD><TD></TD><TD>End position of the domain within the sequence given in the component_sequences table.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>COMPONENT_GO:</h2>
+    Table mapping protein components in the COMPONENT_SEQUENCES table to the GO slim terms stored in the GO_CLASSIFICATION table
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>COMP_GO_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>COMPONENT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to COMPONENT_SEQUENCES table. The protein component this GO term applies to</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>GO_ID</TD><TD>VARCHAR2(10)</TD><TD>NOT NULL</TD><TD>Foreign key to the GO_CLASSIFICATION table. The GO term that this protein is mapped to</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>COMPONENT_SEQUENCES:</h2>
+    Table storing the sequences for components of molecular targets (e.g., protein sequences), along with other details taken from sequence databases (e.g., names, accessions). Single protein targets will have a single protein component in this table, whereas protein complexes/protein families will have multiple protein components.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>COMPONENT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key. Unique identifier for the component.</TD></TR>
+        
+            <TR><TD></TD><TD>COMPONENT_TYPE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Type of molecular component represented (e.g., 'PROTEIN','DNA','RNA').</TD></TR>
+        
+            <TR><TD>UK</TD><TD>ACCESSION</TD><TD>VARCHAR2(25)</TD><TD></TD><TD>Accession for the sequence in the source database from which it was taken (e.g., UniProt accession for proteins).</TD></TR>
+        
+            <TR><TD></TD><TD>SEQUENCE</TD><TD>CLOB</TD><TD></TD><TD>A representative sequence for the molecular component, as given in the source sequence database (not necessarily the exact sequence used in the assay).</TD></TR>
+        
+            <TR><TD></TD><TD>SEQUENCE_MD5SUM</TD><TD>VARCHAR2(32)</TD><TD></TD><TD>MD5 checksum of the sequence.</TD></TR>
+        
+            <TR><TD></TD><TD>DESCRIPTION</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Description/name for the molecular component, usually taken from the source sequence database.</TD></TR>
+        
+            <TR><TD></TD><TD>TAX_ID</TD><TD>NUMBER</TD><TD></TD><TD>NCBI tax ID for the sequence in the source database (i.e., species that the protein/nucleic acid sequence comes from).</TD></TR>
+        
+            <TR><TD></TD><TD>ORGANISM</TD><TD>VARCHAR2(150)</TD><TD></TD><TD>Name of the organism the sequence comes from.</TD></TR>
+        
+            <TR><TD></TD><TD>DB_SOURCE</TD><TD>VARCHAR2(25)</TD><TD></TD><TD>The name of the source sequence database from which sequences/accessions are taken. For UniProt proteins, this field indicates whether the sequence is from SWISS-PROT or TREMBL.</TD></TR>
+        
+            <TR><TD></TD><TD>DB_VERSION</TD><TD>VARCHAR2(10)</TD><TD></TD><TD>The version of the source sequence database from which sequences/accession were last updated.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>COMPONENT_SYNONYMS:</h2>
+    Table storing synonyms for the components of molecular targets (e.g., names, acronyms, gene symbols etc.) Please note: EC numbers are also currently included in this table although they are not strictly synonyms and can apply to multiple proteins.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>COMPSYN_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>COMPONENT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the component_sequences table. The component to which this synonym applies.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>COMPONENT_SYNONYM</TD><TD>VARCHAR2(500)</TD><TD></TD><TD>The synonym for the component.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>SYN_TYPE</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>The type or origin of the synonym (e.g., GENE_SYMBOL).</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>COMPOUND_PROPERTIES:</h2>
+    Table storing calculated physicochemical properties for compounds, now calculated with RDKit and ChemAxon software (note all but FULL_MWT and FULL_MOLFORMULA are calculated on the parent structure)
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK,FK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to compounds table (compound structure)</TD></TR>
+        
+            <TR><TD></TD><TD>MW_FREEBASE</TD><TD>NUMBER</TD><TD></TD><TD>Molecular weight of parent compound</TD></TR>
+        
+            <TR><TD></TD><TD>ALOGP</TD><TD>NUMBER</TD><TD></TD><TD>Calculated ALogP</TD></TR>
+        
+            <TR><TD></TD><TD>HBA</TD><TD>NUMBER</TD><TD></TD><TD>Number hydrogen bond acceptors</TD></TR>
+        
+            <TR><TD></TD><TD>HBD</TD><TD>NUMBER</TD><TD></TD><TD>Number hydrogen bond donors</TD></TR>
+        
+            <TR><TD></TD><TD>PSA</TD><TD>NUMBER</TD><TD></TD><TD>Polar surface area</TD></TR>
+        
+            <TR><TD></TD><TD>RTB</TD><TD>NUMBER</TD><TD></TD><TD>Number rotatable bonds</TD></TR>
+        
+            <TR><TD></TD><TD>RO3_PASS</TD><TD>VARCHAR2(3)</TD><TD></TD><TD>Indicates whether the compound passes the rule-of-three (mw < 300, logP < 3 etc)</TD></TR>
+        
+            <TR><TD></TD><TD>NUM_RO5_VIOLATIONS</TD><TD>NUMBER</TD><TD></TD><TD>Number of violations of Lipinski's rule-of-five, using HBA and HBD definitions</TD></TR>
+        
+            <TR><TD></TD><TD>FULL_MWT</TD><TD>NUMBER</TD><TD></TD><TD>Molecular weight of the full compound including any salts</TD></TR>
+        
+            <TR><TD></TD><TD>AROMATIC_RINGS</TD><TD>NUMBER</TD><TD></TD><TD>Number of aromatic rings</TD></TR>
+        
+            <TR><TD></TD><TD>HEAVY_ATOMS</TD><TD>NUMBER</TD><TD></TD><TD>Number of heavy (non-hydrogen) atoms</TD></TR>
+        
+            <TR><TD></TD><TD>QED_WEIGHTED</TD><TD>NUMBER</TD><TD></TD><TD>Weighted quantitative estimate of drug likeness (as defined by Bickerton et al., Nature Chem 2012)</TD></TR>
+        
+            <TR><TD></TD><TD>FULL_MOLFORMULA</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Molecular formula for the full compound (including any salt)</TD></TR>
+        
+            <TR><TD></TD><TD>NP_LIKENESS_SCORE</TD><TD>NUMBER</TD><TD></TD><TD>Natural Product-likeness Score: Peter Ertl, Silvio Roggo, and Ansgar Schuffenhauer Journal of Chemical Information and Modeling, 48, 68-74 (2008) </TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>COMPOUND_RECORDS:</h2>
+    Represents each compound extracted from scientific documents.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>RECORD_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Unique ID for a compound/record</TD></TR>
+        
+            <TR><TD>FK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to compounds table (compound structure)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>DOC_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to documents table</TD></TR>
+        
+            <TR><TD></TD><TD>COMPOUND_KEY</TD><TD>VARCHAR2(250)</TD><TD></TD><TD>Key text identifying this compound in the scientific document</TD></TR>
+        
+            <TR><TD></TD><TD>COMPOUND_NAME</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>Name of this compound recorded in the scientific document</TD></TR>
+        
+            <TR><TD>FK</TD><TD>SRC_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to source table</TD></TR>
+        
+            <TR><TD></TD><TD>SRC_COMPOUND_ID</TD><TD>VARCHAR2(150)</TD><TD></TD><TD>Identifier for the compound in the source database (e.g., pubchem SID)</TD></TR>
+        
+            <TR><TD></TD><TD>CIDX</TD><TD>VARCHAR2(200)</TD><TD>NOT NULL</TD><TD>The Depositor Defined Compound Identifier.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>COMPOUND_STRUCTURAL_ALERTS:</h2>
+    Table showing which structural alerts (as defined in the STRUCTURAL_ALERTS table) are found in a particular ChEMBL compound. It should be noted some alerts/alert sets are more permissive than others and may flag a large number of compounds. Results should be interpreted with care, depending on the use-case, and not treated as a blanket filter (e.g., around 50% of approved drugs have 1 or more alerts from these sets).
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>CPD_STR_ALERT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the molecule_dictionary. The compound for which the structural alert has been found.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>ALERT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the structural_alerts table. The particular alert that has been identified in this compound.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>COMPOUND_STRUCTURES:</h2>
+    Table storing various structure representations (e.g., Molfile, InChI) for each compound
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK,FK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Internal Primary Key for the compound structure and foreign key to molecule_dictionary table</TD></TR>
+        
+            <TR><TD></TD><TD>MOLFILE</TD><TD>CLOB</TD><TD></TD><TD>MDL Connection table representation of compound</TD></TR>
+        
+            <TR><TD>UK</TD><TD>STANDARD_INCHI</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>IUPAC standard InChI for the compound</TD></TR>
+        
+            <TR><TD>UK</TD><TD>STANDARD_INCHI_KEY</TD><TD>VARCHAR2(27)</TD><TD>NOT NULL</TD><TD>IUPAC standard InChI key for the compound</TD></TR>
+        
+            <TR><TD></TD><TD>CANONICAL_SMILES</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>Canonical smiles, generated using RDKit</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>CONFIDENCE_SCORE_LOOKUP:</h2>
+    Lookup table describing how assays confidence scores are assigned depending on the type of target(s) assigned to the assay and the level of confidence in their molecular identity
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>CONFIDENCE_SCORE</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>0-9 score showing level of confidence in assignment of the precise molecular target of the assay</TD></TR>
+        
+            <TR><TD></TD><TD>DESCRIPTION</TD><TD>VARCHAR2(100)</TD><TD>NOT NULL</TD><TD>Description of the target types assigned with each score</TD></TR>
+        
+            <TR><TD></TD><TD>TARGET_MAPPING</TD><TD>VARCHAR2(30)</TD><TD>NOT NULL</TD><TD>Short description of the target types assigned with each score</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>DATA_VALIDITY_LOOKUP:</h2>
+    Table storing information about the data_validity_comment values used in the activities table.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>DATA_VALIDITY_COMMENT</TD><TD>VARCHAR2(30)</TD><TD>NOT NULL</TD><TD>Primary key. Short description of various types of errors/warnings applied to values in the activities table.</TD></TR>
+        
+            <TR><TD></TD><TD>DESCRIPTION</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Definition of the terms in the data_validity_comment field.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>DEFINED_DAILY_DOSE:</h2>
+    WHO DDD (defined daily dose) information
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>FK</TD><TD>ATC_CODE</TD><TD>VARCHAR2(10)</TD><TD>NOT NULL</TD><TD>ATC code for the compound (foreign key to ATC_CLASSIFICATION table)</TD></TR>
+        
+            <TR><TD></TD><TD>DDD_UNITS</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Units of defined daily dose</TD></TR>
+        
+            <TR><TD></TD><TD>DDD_ADMR</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Administration route for dose</TD></TR>
+        
+            <TR><TD></TD><TD>DDD_COMMENT</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Comment</TD></TR>
+        
+            <TR><TD>PK</TD><TD>DDD_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Internal primary key</TD></TR>
+        
+            <TR><TD></TD><TD>DDD_VALUE</TD><TD>NUMBER</TD><TD></TD><TD>Value of defined daily dose</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>DOCS:</h2>
+    Holds all scientific documents (journal articles or patents) from which assays have been extracted.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>DOC_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Unique ID for the document</TD></TR>
+        
+            <TR><TD></TD><TD>JOURNAL</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Abbreviated journal name for an article</TD></TR>
+        
+            <TR><TD></TD><TD>YEAR</TD><TD>NUMBER</TD><TD></TD><TD>Year of journal article publication</TD></TR>
+        
+            <TR><TD></TD><TD>VOLUME</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Volume of journal article</TD></TR>
+        
+            <TR><TD></TD><TD>ISSUE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Issue of journal article</TD></TR>
+        
+            <TR><TD></TD><TD>FIRST_PAGE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>First page number of journal article</TD></TR>
+        
+            <TR><TD></TD><TD>LAST_PAGE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Last page number of journal article</TD></TR>
+        
+            <TR><TD></TD><TD>PUBMED_ID</TD><TD>NUMBER</TD><TD></TD><TD>NIH pubmed record ID, where available</TD></TR>
+        
+            <TR><TD></TD><TD>DOI</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Digital object identifier for this reference</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>CHEMBL_ID</TD><TD>VARCHAR2(20)</TD><TD>NOT NULL</TD><TD>ChEMBL identifier for this document (for use on web interface etc)</TD></TR>
+        
+            <TR><TD></TD><TD>TITLE</TD><TD>VARCHAR2(500)</TD><TD></TD><TD>Document title (e.g., Publication title or description of dataset)</TD></TR>
+        
+            <TR><TD></TD><TD>DOC_TYPE</TD><TD>VARCHAR2(50)</TD><TD>NOT NULL</TD><TD>Type of the document (e.g., Publication, Deposited dataset)</TD></TR>
+        
+            <TR><TD></TD><TD>AUTHORS</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>For a deposited dataset, the authors carrying out the screening and/or submitting the dataset.</TD></TR>
+        
+            <TR><TD></TD><TD>ABSTRACT</TD><TD>CLOB</TD><TD></TD><TD>For a deposited dataset, a brief description of the dataset.</TD></TR>
+        
+            <TR><TD></TD><TD>PATENT_ID</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>Patent ID for this document</TD></TR>
+        
+            <TR><TD></TD><TD>RIDX</TD><TD>VARCHAR2(200)</TD><TD>NOT NULL</TD><TD>The Depositor Defined Reference Identifier</TD></TR>
+        
+            <TR><TD>FK</TD><TD>SRC_ID</TD><TD>INTEGER</TD><TD>NOT NULL</TD><TD>Foreign key to Source table, indicating the source of this document</TD></TR>
+        
+            <TR><TD>FK</TD><TD>CHEMBL_RELEASE_ID</TD><TD>INTEGER</TD><TD></TD><TD>Foreign key to chembl_release table</TD></TR>
+        
+            <TR><TD></TD><TD>CONTACT</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>A stable identifier (ideally ORCID) for one to three (stable) primary contact person(s) for this data set should be provided; this could be the individual carrying out the experiment, the head of a laboratory or a line manager.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>DOMAINS:</h2>
+    Table storing a non-redundant list of domains found in protein targets (e.g., Pfam domains).
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>DOMAIN_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key. Unique identifier for each domain.</TD></TR>
+        
+            <TR><TD></TD><TD>DOMAIN_TYPE</TD><TD>VARCHAR2(20)</TD><TD>NOT NULL</TD><TD>Indicates the source of the domain (e.g., Pfam).</TD></TR>
+        
+            <TR><TD></TD><TD>SOURCE_DOMAIN_ID</TD><TD>VARCHAR2(20)</TD><TD>NOT NULL</TD><TD>Identifier for the domain in the source database (e.g., Pfam ID such as PF00001).</TD></TR>
+        
+            <TR><TD></TD><TD>DOMAIN_NAME</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Name given to the domain in the source database (e.g., 7tm_1).</TD></TR>
+        
+            <TR><TD></TD><TD>DOMAIN_DESCRIPTION</TD><TD>VARCHAR2(500)</TD><TD></TD><TD>Longer name or description for the domain.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>DRUG_INDICATION:</h2>
+    Table storing indications for drugs, and clinical candidate drugs, from a variety of sources (e.g., FDA, EMA, WHO ATC, ClinicalTrials.gov, INN, USAN).
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>DRUGIND_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>RECORD_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to compound_records table. Links to the drug record to which this indication applies</TD></TR>
+        
+            <TR><TD>FK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD></TD><TD>Molregno for the drug (foreign key to the molecule_dictionary and compound_records tables)</TD></TR>
+        
+            <TR><TD></TD><TD>MAX_PHASE_FOR_IND</TD><TD>NUMBER</TD><TD></TD><TD>Maximum phase of development that the drug is known to have reached for this particular indication (4 = Approved, 3 = Phase 3 Clinical Trials, 2 = Phase 2 Clinical Trials, 1 = Phase 1 Clinical Trials, 0.5 = Early Phase 1 Clinical Trials, -1 = Clinical Phase unknown for drug or clinical candidate drug ie where ChEMBL cannot assign a clinical phase)</TD></TR>
+        
+            <TR><TD>UK</TD><TD>MESH_ID</TD><TD>VARCHAR2(20)</TD><TD>NOT NULL</TD><TD>Medical Subject Headings (MeSH) disease identifier corresponding to the indication</TD></TR>
+        
+            <TR><TD></TD><TD>MESH_HEADING</TD><TD>VARCHAR2(200)</TD><TD>NOT NULL</TD><TD>Medical Subject Heading term for the MeSH disease ID</TD></TR>
+        
+            <TR><TD>UK</TD><TD>EFO_ID</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>Experimental Factor Ontology (EFO) disease identifier corresponding to the indication</TD></TR>
+        
+            <TR><TD></TD><TD>EFO_TERM</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Experimental Factor Ontology term for the EFO ID</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>DRUG_MECHANISM:</h2>
+    Table storing mechanism of action information for drugs, and clinical candidate drugs, from a variety of sources (e.g., ATC, FDA, ClinicalTrials.gov)
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>MEC_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key for each drug mechanism of action</TD></TR>
+        
+            <TR><TD>FK</TD><TD>RECORD_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Record_id for the drug (foreign key to compound_records table)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD></TD><TD>Molregno for the drug (foreign key to molecule_dictionary table)</TD></TR>
+        
+            <TR><TD></TD><TD>MECHANISM_OF_ACTION</TD><TD>VARCHAR2(250)</TD><TD></TD><TD>Description of the mechanism of action e.g., 'Phosphodiesterase 5 inhibitor'</TD></TR>
+        
+            <TR><TD>FK</TD><TD>TID</TD><TD>NUMBER</TD><TD></TD><TD>Target associated with this mechanism of action (foreign key to target_dictionary table)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>SITE_ID</TD><TD>NUMBER</TD><TD></TD><TD>Binding site for the drug within the target (where known) - foreign key to binding_sites table</TD></TR>
+        
+            <TR><TD>FK</TD><TD>ACTION_TYPE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Type of action of the drug on the target e.g., agonist/antagonist etc (foreign key to action_type table)</TD></TR>
+        
+            <TR><TD></TD><TD>DIRECT_INTERACTION</TD><TD>NUMBER</TD><TD></TD><TD>Flag to show whether the molecule is believed to interact directly with the target (1 = yes, 0 = no)</TD></TR>
+        
+            <TR><TD></TD><TD>MOLECULAR_MECHANISM</TD><TD>NUMBER</TD><TD></TD><TD>Flag to show whether the mechanism of action describes the molecular target of the drug, rather than a higher-level physiological mechanism e.g., vasodilator (1 = yes, 0 = no)</TD></TR>
+        
+            <TR><TD></TD><TD>DISEASE_EFFICACY</TD><TD>NUMBER</TD><TD></TD><TD>Flag to show whether the target assigned is believed to play a role in the efficacy of the drug in the indication(s) for which it is approved (1 = yes, 0 = no)</TD></TR>
+        
+            <TR><TD></TD><TD>MECHANISM_COMMENT</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Additional comments regarding the mechanism of action</TD></TR>
+        
+            <TR><TD></TD><TD>SELECTIVITY_COMMENT</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Additional comments regarding the selectivity of the drug</TD></TR>
+        
+            <TR><TD></TD><TD>BINDING_SITE_COMMENT</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Additional comments regarding the binding site of the drug</TD></TR>
+        
+            <TR><TD>FK</TD><TD>VARIANT_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to variant_sequences table. Indicates the mutant/variant version of the target used in the assay (where known/applicable)</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>DRUG_WARNING:</h2>
+    Table storing safety-related information for drugs and clinical candidates
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>WARNING_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key for the drug warning</TD></TR>
+        
+            <TR><TD>FK</TD><TD>RECORD_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to the compound_records table</TD></TR>
+        
+            <TR><TD></TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to molecule_dictionary table</TD></TR>
+        
+            <TR><TD></TD><TD>WARNING_TYPE</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>Description of the drug warning type (e.g., withdrawn vs black box warning)</TD></TR>
+        
+            <TR><TD></TD><TD>WARNING_CLASS</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>High-level class of the drug warning</TD></TR>
+        
+            <TR><TD></TD><TD>WARNING_DESCRIPTION</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>Description of the drug warning</TD></TR>
+        
+            <TR><TD></TD><TD>WARNING_COUNTRY</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>List of countries/regions associated with the drug warning</TD></TR>
+        
+            <TR><TD></TD><TD>WARNING_YEAR</TD><TD>NUMBER</TD><TD></TD><TD>Earliest year the warning was applied to the drug.</TD></TR>
+        
+            <TR><TD></TD><TD>EFO_TERM</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Term for Experimental Factor Ontology (EFO)</TD></TR>
+        
+            <TR><TD></TD><TD>EFO_ID</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>Identifier for Experimental Factor Ontology (EFO)</TD></TR>
+        
+            <TR><TD></TD><TD>EFO_ID_FOR_WARNING_CLASS</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>Warning Class Identifier for Experimental Factor Ontology (EFO)</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>FORMULATIONS:</h2>
+    Table linking individual ingredients in approved products (and their strengths) to entries in the molecule dictionary. Where products are mixtures of active ingredients they will have multiple entries in this table
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>PRODUCT_ID</TD><TD>VARCHAR2(30)</TD><TD>NOT NULL</TD><TD>Unique identifier of the product. FK to PRODUCTS</TD></TR>
+        
+            <TR><TD></TD><TD>INGREDIENT</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Name of the approved ingredient within the product</TD></TR>
+        
+            <TR><TD></TD><TD>STRENGTH</TD><TD>VARCHAR2(300)</TD><TD></TD><TD>Dose strength</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>RECORD_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the compound_records table.</TD></TR>
+        
+            <TR><TD>FK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD></TD><TD>Unique identifier of the ingredient FK to MOLECULE_DICTIONARY</TD></TR>
+        
+            <TR><TD>PK</TD><TD>FORMULATION_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>GO_CLASSIFICATION:</h2>
+    Table storing the ChEMBL Drug Target GO slim (http://www.geneontology.org/ontology/subsets/goslim_chembl.obo)
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>GO_ID</TD><TD>VARCHAR2(10)</TD><TD>NOT NULL</TD><TD>Primary key. Gene Ontology identifier for the GO slim term</TD></TR>
+        
+            <TR><TD></TD><TD>PARENT_GO_ID</TD><TD>VARCHAR2(10)</TD><TD></TD><TD>Gene Ontology identifier for the parent of this GO term in the ChEMBL Drug Target GO slim</TD></TR>
+        
+            <TR><TD></TD><TD>PREF_NAME</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Gene Ontology name</TD></TR>
+        
+            <TR><TD></TD><TD>CLASS_LEVEL</TD><TD>NUMBER</TD><TD></TD><TD>Indicates the level of the term in the slim (L1 = highest)</TD></TR>
+        
+            <TR><TD></TD><TD>ASPECT</TD><TD>VARCHAR2(1)</TD><TD></TD><TD>Indicates which aspect of the Gene Ontology the term belongs to (F = molecular function, P = biological process, C = cellular component)</TD></TR>
+        
+            <TR><TD></TD><TD>PATH</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Indicates the full path to this term in the GO slim</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>INDICATION_REFS:</h2>
+    Table storing references indicating the source of drug indication information
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>INDREF_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>DRUGIND_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the DRUG_INDICATION table, indicating the drug-indication link that this reference applies to</TD></TR>
+        
+            <TR><TD>UK</TD><TD>REF_TYPE</TD><TD>VARCHAR2(50)</TD><TD>NOT NULL</TD><TD>Type/source of reference</TD></TR>
+        
+            <TR><TD>UK</TD><TD>REF_ID</TD><TD>VARCHAR2(4000)</TD><TD>NOT NULL</TD><TD>Identifier for the reference in the source</TD></TR>
+        
+            <TR><TD></TD><TD>REF_URL</TD><TD>VARCHAR2(4000)</TD><TD>NOT NULL</TD><TD>Full URL linking to the reference</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>LIGAND_EFF:</h2>
+    Contains BEI (Binding Efficiency Index) and SEI (Surface Binding Efficiency Index) for each activity_id where such data can be calculated.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK,FK</TD><TD>ACTIVITY_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Link key to activities table</TD></TR>
+        
+            <TR><TD></TD><TD>BEI</TD><TD>NUMBER</TD><TD></TD><TD>Binding Efficiency Index = p(XC50) *1000/MW_freebase</TD></TR>
+        
+            <TR><TD></TD><TD>SEI</TD><TD>NUMBER</TD><TD></TD><TD>Surface Efficiency Index = p(XC50)*100/PSA</TD></TR>
+        
+            <TR><TD></TD><TD>LE</TD><TD>NUMBER</TD><TD></TD><TD>Ligand Efficiency = deltaG/heavy_atoms  [from the Hopkins DDT paper 2004]</TD></TR>
+        
+            <TR><TD></TD><TD>LLE</TD><TD>NUMBER</TD><TD></TD><TD>Lipophilic Ligand Efficiency = -logKi-ALogP. [from Leeson NRDD 2007]</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>MECHANISM_REFS:</h2>
+    Table storing references for information in the drug_mechanism table
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>MECREF_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>MEC_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to drug_mechanism table - indicating the mechanism to which the references refer</TD></TR>
+        
+            <TR><TD>UK</TD><TD>REF_TYPE</TD><TD>VARCHAR2(50)</TD><TD>NOT NULL</TD><TD>Type/source of reference (e.g., 'PubMed','DailyMed')</TD></TR>
+        
+            <TR><TD>UK</TD><TD>REF_ID</TD><TD>VARCHAR2(400)</TD><TD></TD><TD>Identifier for the reference in the source (e.g., PubMed ID or DailyMed setid)</TD></TR>
+        
+            <TR><TD></TD><TD>REF_URL</TD><TD>VARCHAR2(400)</TD><TD></TD><TD>Full URL linking to the reference</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>METABOLISM:</h2>
+    Table storing drug metabolic pathways, manually curated from a variety of sources
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>MET_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>DRUG_RECORD_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to compound_records. Record representing the drug or other compound for which metabolism is being studied (may not be the same as the substrate being measured)</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>SUBSTRATE_RECORD_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to compound_records. Record representing the compound that is the subject of metabolism</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>METABOLITE_RECORD_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to compound_records. Record representing the compound that is the result of metabolism</TD></TR>
+        
+            <TR><TD>UK</TD><TD>PATHWAY_ID</TD><TD>NUMBER</TD><TD></TD><TD>Identifier for the metabolic scheme/pathway (may be multiple pathways from one source document)</TD></TR>
+        
+            <TR><TD></TD><TD>PATHWAY_KEY</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Link to original source indicating where the pathway information was found (e.g., Figure 1, page 23)</TD></TR>
+        
+            <TR><TD>UK</TD><TD>ENZYME_NAME</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Name of the enzyme responsible for the metabolic conversion</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>ENZYME_TID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to target_dictionary. TID for the enzyme responsible for the metabolic conversion</TD></TR>
+        
+            <TR><TD></TD><TD>MET_CONVERSION</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Description of the metabolic conversion</TD></TR>
+        
+            <TR><TD></TD><TD>ORGANISM</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Organism in which this metabolic reaction occurs</TD></TR>
+        
+            <TR><TD>UK</TD><TD>TAX_ID</TD><TD>NUMBER</TD><TD></TD><TD>NCBI Tax ID for the organism in which this metabolic reaction occurs</TD></TR>
+        
+            <TR><TD></TD><TD>MET_COMMENT</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Additional information regarding the metabolism (e.g., organ system, conditions under which observed, activity of metabolites)</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>METABOLISM_REFS:</h2>
+    Table storing references for metabolic pathways, indicating the source of the data
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>METREF_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>MET_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to record_metabolism table - indicating the metabolism information to which the references refer</TD></TR>
+        
+            <TR><TD>UK</TD><TD>REF_TYPE</TD><TD>VARCHAR2(50)</TD><TD>NOT NULL</TD><TD>Type/source of reference (e.g., 'PubMed','DailyMed')</TD></TR>
+        
+            <TR><TD>UK</TD><TD>REF_ID</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Identifier for the reference in the source (e.g., PubMed ID or DailyMed setid)</TD></TR>
+        
+            <TR><TD></TD><TD>REF_URL</TD><TD>VARCHAR2(400)</TD><TD></TD><TD>Full URL linking to the reference</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>MOLECULE_ATC_CLASSIFICATION:</h2>
+    Table mapping drugs in the molecule_dictionary to ATC codes in the atc_classification table
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>MOL_ATC_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+            <TR><TD>FK</TD><TD>LEVEL5</TD><TD>VARCHAR2(10)</TD><TD>NOT NULL</TD><TD>ATC code (foreign key to atc_classification table)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Drug to which the ATC code applies (foreign key to molecule_dictionary table)</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>MOLECULE_DICTIONARY:</h2>
+    Table storing a non-redundant list of curated compounds for ChEMBL (includes preclinical compounds, drugs and clinical candidate drugs) and some associated attributes.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Internal Primary Key for the molecule</TD></TR>
+        
+            <TR><TD></TD><TD>PREF_NAME</TD><TD>VARCHAR2(255)</TD><TD></TD><TD>Preferred name for the molecule</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>CHEMBL_ID</TD><TD>VARCHAR2(20)</TD><TD>NOT NULL</TD><TD>ChEMBL identifier for this compound (for use on web interface etc)</TD></TR>
+        
+            <TR><TD></TD><TD>MAX_PHASE</TD><TD>NUMBER</TD><TD></TD><TD>Maximum phase of development reached for the compound across all indications (4 = Approved, 3 = Phase 3 Clinical Trials, 2 = Phase 2 Clinical Trials, 1 = Phase 1 Clinical Trials, 0.5 = Early Phase 1 Clinical Trials, -1 = Clinical Phase unknown for drug or clinical candidate drug ie where ChEMBL cannot assign a clinical phase, NULL = preclinical compounds with bioactivity data)</TD></TR>
+        
+            <TR><TD></TD><TD>THERAPEUTIC_FLAG</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates that a drug has a therapeutic application, as opposed to e.g., an imaging agent, additive etc (1 = yes, 0 = default value).</TD></TR>
+        
+            <TR><TD></TD><TD>DOSED_INGREDIENT</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates that the drug is dosed in this form, e.g., a particular salt (1 = yes, 0 = default value)</TD></TR>
+        
+            <TR><TD></TD><TD>STRUCTURE_TYPE</TD><TD>VARCHAR2(10)</TD><TD>NOT NULL</TD><TD>Indicates whether the molecule has a small molecule structure or a protein sequence (MOL indicates an entry in the compound_structures table, SEQ indications an entry in the protein_therapeutics table, NONE indicates an entry in neither table, e.g., structure unknown)</TD></TR>
+        
+            <TR><TD></TD><TD>MOLECULE_TYPE</TD><TD>VARCHAR2(30)</TD><TD></TD><TD>Type of molecule (Small molecule, Protein, Antibody, Antibody drug conjugate, Oligosaccharide, Oligonucleotide, Cell, Enzyme, Gene, Unknown)</TD></TR>
+        
+            <TR><TD></TD><TD>FIRST_APPROVAL</TD><TD>NUMBER</TD><TD></TD><TD>Earliest known approval year for the drug (NULL is the default value)</TD></TR>
+        
+            <TR><TD></TD><TD>ORAL</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates whether the drug is known to be administered orally (1 = yes, 0 = default value)</TD></TR>
+        
+            <TR><TD></TD><TD>PARENTERAL</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates whether the drug is known to be administered parenterally (1 = yes, 0 = default value)</TD></TR>
+        
+            <TR><TD></TD><TD>TOPICAL</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates whether the drug is known to be administered topically (1 = yes, 0 = default value).</TD></TR>
+        
+            <TR><TD></TD><TD>BLACK_BOX_WARNING</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates that the drug has a black box warning (1 = yes, 0 = default value)</TD></TR>
+        
+            <TR><TD></TD><TD>NATURAL_PRODUCT</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates whether the compound is a natural product as defined by COCONUT (https://coconut.naturalproducts.net/), the COlleCtion of Open Natural ProdUcTs. (1 = yes, 0 = default value)</TD></TR>
+        
+            <TR><TD></TD><TD>FIRST_IN_CLASS</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates whether this is known to be the first approved drug of its class (e.g., acting on a particular target). This is regardless of the indication, or the route of administration (1 = yes, 0 = no, -1 = preclinical compound ie not a drug).</TD></TR>
+        
+            <TR><TD></TD><TD>CHIRALITY</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates the chirality of the drug (2 = an achiral molecule, 1 = single enantiomer where all stereocenters have known absolute configuration, 0 = a mixture of stereoisomers such as a racemic mixture, epimeric mixture, etc, -1 = has unknown chirality)</TD></TR>
+        
+            <TR><TD></TD><TD>PRODRUG</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates that the drug is a pro-drug. See active_molregno field in molecule hierarchy for the pharmacologically active molecule, where known (1 = yes, 0 = no, -1 = preclinical compound ie not a drug)</TD></TR>
+        
+            <TR><TD></TD><TD>INORGANIC_FLAG</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates whether the molecule is inorganic i.e., containing only metal atoms and <2 carbon atoms (1 = yes, 0 = no, -1 = preclinical compound ie not a drug)</TD></TR>
+        
+            <TR><TD></TD><TD>USAN_YEAR</TD><TD>NUMBER</TD><TD></TD><TD>The year in which the application for a USAN name was granted. (NULL is the default value)</TD></TR>
+        
+            <TR><TD></TD><TD>AVAILABILITY_TYPE</TD><TD>NUMBER</TD><TD></TD><TD>The availability type for the drug (-2 = withdrawn, -1 = unknown, 0 = discontinued, 1 = prescription only, 2 = over the counter)</TD></TR>
+        
+            <TR><TD></TD><TD>USAN_STEM</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Where the drug or clinical candidate name can be matched, this indicates the USAN stem (NULL is the default value). Also described in the USAN_STEMS table.</TD></TR>
+        
+            <TR><TD></TD><TD>POLYMER_FLAG</TD><TD>NUMBER</TD><TD></TD><TD>Indicates whether a molecule is a small molecule polymer, e.g., polistyrex (1 = yes, 0 = default value)</TD></TR>
+        
+            <TR><TD></TD><TD>USAN_SUBSTEM</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Where the drug or clinical candidate name can be matched, this indicates the USAN substem (NULL is the default value)</TD></TR>
+        
+            <TR><TD></TD><TD>USAN_STEM_DEFINITION</TD><TD>VARCHAR2(1000)</TD><TD></TD><TD>Definition of the USAN stem (NULL is the default value)</TD></TR>
+        
+            <TR><TD></TD><TD>WITHDRAWN_FLAG</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates an approved drug has been withdrawn for toxicity reasons for all indications, for all populations at all doses in at least one country (not necessarily in the US). (1 = yes, 0 = default value)</TD></TR>
+        
+            <TR><TD></TD><TD>CHEMICAL_PROBE</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates whether the compound is a chemical probe; for exact definition see release notes (1 = yes, 0 = default value).</TD></TR>
+        
+            <TR><TD></TD><TD>ORPHAN</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates orphan designation, i.e. intended for use against a rare condition (1 = yes, 0 = no, -1 = preclinical compound ie not a drug)</TD></TR>
+        
+            <TR><TD></TD><TD>VETERINARY</TD><TD>NUMBER</TD><TD></TD><TD>Indicates whether the drug is known to have a veterinary product. A veterinary product may also be a medicinal product for Human use. (1 = yes, 0 = no, -1 = preclinical compound ie not a drug).</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>MOLECULE_HIERARCHY:</h2>
+    Table storing relationships between parents, salts and active metabolites (for pro-drugs).
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK,FK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to compounds table. This field holds a list of all of the ChEMBL compounds with associated data (e.g., activity information, approved drugs). Parent compounds that are generated only by removing salts, and which do not themselves have any associated data will not appear here.</TD></TR>
+        
+            <TR><TD>FK</TD><TD>PARENT_MOLREGNO</TD><TD>NUMBER</TD><TD></TD><TD>Represents parent compound of molregno in first field (i.e., generated by removing salts). Where molregno and parent_molregno are same, the initial ChEMBL compound did not contain a salt component, or else could not be further processed for various reasons (e.g., inorganic mixture). Compounds which are only generated by removing salts will appear in this field only. Those which, themselves, have any associated data (e.g., activity data) or are launched drugs will also appear in the molregno field.</TD></TR>
+        
+            <TR><TD>FK</TD><TD>ACTIVE_MOLREGNO</TD><TD>NUMBER</TD><TD></TD><TD>Where a compound is a pro-drug, this represents the active metabolite of the 'dosed' compound given by parent_molregno. Where parent_molregno and active_molregno are the same, the compound is not currently known to be a pro-drug. </TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>MOLECULE_SYNONYMS:</h2>
+    Stores synonyms for a compound (e.g., common names, trade names, research codes etc)
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to molecule_dictionary</TD></TR>
+        
+            <TR><TD>UK</TD><TD>SYN_TYPE</TD><TD>VARCHAR2(50)</TD><TD>NOT NULL</TD><TD>Type of name/synonym (e.g., TRADE_NAME, RESEARCH_CODE, USAN)</TD></TR>
+        
+            <TR><TD>PK</TD><TD>MOLSYN_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>SYNONYMS</TD><TD>VARCHAR2(250)</TD><TD></TD><TD>Synonym for the compound</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>ORGANISM_CLASS:</h2>
+    Simple organism classification (essentially a cut-down version of the NCBI taxonomy for organisms in ChEMBL target_dictionary table), allowing browsing of ChEMBL data by taxonomic groups
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>OC_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Internal primary key</TD></TR>
+        
+            <TR><TD>UK</TD><TD>TAX_ID</TD><TD>NUMBER</TD><TD></TD><TD>NCBI taxonomy ID for the organism (corresponding to tax_ids in target_dictionary table)</TD></TR>
+        
+            <TR><TD></TD><TD>L1</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Highest level classification (e.g., Eukaryotes, Bacteria, Fungi etc)</TD></TR>
+        
+            <TR><TD></TD><TD>L2</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Second level classification</TD></TR>
+        
+            <TR><TD></TD><TD>L3</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Third level classification</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>PATENT_USE_CODES:</h2>
+    Table from FDA Orange Book, showing definitions of different patent use codes (as used in the product_patents table).
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>PATENT_USE_CODE</TD><TD>VARCHAR2(8)</TD><TD>NOT NULL</TD><TD>Primary key. Patent use code from FDA Orange Book</TD></TR>
+        
+            <TR><TD></TD><TD>DEFINITION</TD><TD>VARCHAR2(500)</TD><TD>NOT NULL</TD><TD>Definition for the patent use code, from FDA Orange Book.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>PESTICIDE_CLASS_MAPPING:</h2>
+    Table mapping compounds in the PESTICIDE CLASSIFICATION table to the MOLECULE_DICTIONARY table.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>MOL_PEST_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key for the PESTICIDE_CLASS_MAPPING table</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>PEST_CLASS_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to the PESTICIDE_CLASSIFICATION table</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>MOLREGNO</TD><TD>NUMBER</TD><TD></TD><TD>ChEMBL molecule registration number. Foreign key to the MOLECULE_DICTIONARY table</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>PESTICIDE_CLASSIFICATION:</h2>
+    Table describing the classification of the pesticide mechanism of action according to the Fungicide Resistance Action Committee (FRAC), Herbicide Resistance Action Committee (HRAC), and Insecticide Resistance Action Committee (IRAC).
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>PEST_CLASS_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key for the PESTICIDE_CLASSIFICATION table</TD></TR>
+        
+            <TR><TD>UK</TD><TD>COMPOUND_NAME</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Name used for the compound in the classification by FRAC, HRAC and IRAC. Use the COMPOUND_NAME field in conjunction with the REF_ID and REF_URL fields to identify the appropriate row within the source file.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>MEC_ID</TD><TD>NUMBER</TD><TD></TD><TD>The identifier for the mechanism-of-action. Foreign key to the DRUG_MECHANISM table.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>MECHANISM_COMMENT</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Additional mechanism information about the classification, as described by FRAC, HRAC and IRAC.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>REF_TYPE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>The source of the pesticide classification (Fungicide Resistance Action Committee (FRAC), Herbicide Resistance Action Committee (HRAC), or Insecticide Resistance Action Committee (IRAC).</TD></TR>
+        
+            <TR><TD></TD><TD>REF_ID</TD><TD>VARCHAR2(400)</TD><TD></TD><TD>The name of the file from which the classification is derived. The location of the file is given in the REF_URL field. Use the name given in the COMPOUND_NAME field to identify the row within the file.</TD></TR>
+        
+            <TR><TD></TD><TD>REF_URL</TD><TD>VARCHAR2(400)</TD><TD></TD><TD>Full URL for the source information.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>PREDICTED_BINDING_DOMAINS:</h2>
+    Table storing information on the likely binding domain of compounds in the activities table (based on analysis of the domain structure of the target. Note these are predictions, not experimentally determined. See Kruger F, Rostom R and Overington JP (2012), BMC Bioinformatics, 13(S17), S11 for more details.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>PREDBIND_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+            <TR><TD>FK</TD><TD>ACTIVITY_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to the activities table, indicating the compound/assay(+target) combination for which this prediction is made.</TD></TR>
+        
+            <TR><TD>FK</TD><TD>SITE_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to the binding_sites table, indicating the binding site (domain) that the compound is predicted to bind to.</TD></TR>
+        
+            <TR><TD></TD><TD>PREDICTION_METHOD</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>The method used to assign the binding domain (e.g., 'Single domain' where the protein has only 1 domain, 'Multi domain' where the protein has multiple domains, but only 1 is known to bind small molecules in other proteins).</TD></TR>
+        
+            <TR><TD></TD><TD>CONFIDENCE</TD><TD>VARCHAR2(10)</TD><TD></TD><TD>The level of confidence assigned to the prediction (high where the protein has only 1 domain, medium where the compound has multiple domains, but only 1 known small molecule-binding domain).</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>PRODUCT_PATENTS:</h2>
+    Table from FDA Orange Book, showing patents associated with drug products.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>PROD_PAT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>PRODUCT_ID</TD><TD>VARCHAR2(30)</TD><TD>NOT NULL</TD><TD>Foreign key to products table - FDA application number for the product</TD></TR>
+        
+            <TR><TD>UK</TD><TD>PATENT_NO</TD><TD>VARCHAR2(20)</TD><TD>NOT NULL</TD><TD>Patent numbers as submitted by the applicant holder for patents covered by the statutory provisions</TD></TR>
+        
+            <TR><TD>UK</TD><TD>PATENT_EXPIRE_DATE</TD><TD>DATE</TD><TD>NOT NULL</TD><TD>Date the patent expires as submitted by the applicant holder including applicable extensions</TD></TR>
+        
+            <TR><TD></TD><TD>DRUG_SUBSTANCE_FLAG</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Patents submitted on FDA Form 3542 and listed after August 18, 2003 may have a drug substance flag set to 1, indicating the sponsor submitted the patent as claiming the drug substance</TD></TR>
+        
+            <TR><TD></TD><TD>DRUG_PRODUCT_FLAG</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Patents submitted on FDA Form 3542 and listed after August 18, 2003 may have a drug product flag set to 1, indicating the sponsor submitted the patent as claiming the drug product</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>PATENT_USE_CODE</TD><TD>VARCHAR2(10)</TD><TD></TD><TD>Code to designate a use patent that covers the approved indication or use of a drug product</TD></TR>
+        
+            <TR><TD></TD><TD>DELIST_FLAG</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Sponsor has requested patent be delisted if set to 1.  This patent has remained listed because, under Section 505(j)(5)(D)(i) of the Act, a first applicant may retain eligibility for 180-day exclusivity based on a paragraph IV certification to this patent for a certain period.  Applicants under Section 505(b)(2) are not required to certify to patents where this flag is set to 1</TD></TR>
+        
+            <TR><TD></TD><TD>SUBMISSION_DATE</TD><TD>DATE</TD><TD></TD><TD>The date on which the FDA receives patent information from the new drug application (NDA) holder. Format is Mmm d, yyyy</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>PRODUCTS:</h2>
+    Table containing information about approved drug products (from the FDA Orange Book), such as trade name, administration route, approval date. Ingredients in each product are linked to the molecule dictionary via the formulations table.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD></TD><TD>DOSAGE_FORM</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>The dosage form of the product (e.g., tablet, capsule etc)</TD></TR>
+        
+            <TR><TD></TD><TD>ROUTE</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>The administration route of the product (e.g., oral, injection etc)</TD></TR>
+        
+            <TR><TD></TD><TD>TRADE_NAME</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>The trade name for the product</TD></TR>
+        
+            <TR><TD></TD><TD>APPROVAL_DATE</TD><TD>DATE</TD><TD></TD><TD>The FDA approval date for the product (not necessarily first approval of the active ingredient)</TD></TR>
+        
+            <TR><TD></TD><TD>AD_TYPE</TD><TD>VARCHAR2(5)</TD><TD></TD><TD>RX = prescription, OTC = over the counter, DISCN = discontinued</TD></TR>
+        
+            <TR><TD></TD><TD>ORAL</TD><TD>NUMBER</TD><TD></TD><TD>Flag to show whether product is orally delivered</TD></TR>
+        
+            <TR><TD></TD><TD>TOPICAL</TD><TD>NUMBER</TD><TD></TD><TD>Flag to show whether product is topically delivered</TD></TR>
+        
+            <TR><TD></TD><TD>PARENTERAL</TD><TD>NUMBER</TD><TD></TD><TD>Flag to show whether product is parenterally delivered</TD></TR>
+        
+            <TR><TD></TD><TD>BLACK_BOX_WARNING</TD><TD>NUMBER</TD><TD></TD><TD>Flag to show whether the product label has a black box warning</TD></TR>
+        
+            <TR><TD></TD><TD>APPLICANT_FULL_NAME</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Name of the company applying for FDA approval</TD></TR>
+        
+            <TR><TD></TD><TD>INNOVATOR_COMPANY</TD><TD>NUMBER</TD><TD></TD><TD>Flag to show whether the applicant is the innovator of the product</TD></TR>
+        
+            <TR><TD>PK</TD><TD>PRODUCT_ID</TD><TD>VARCHAR2(30)</TD><TD>NOT NULL</TD><TD>FDA application number for the product</TD></TR>
+        
+            <TR><TD></TD><TD>NDA_TYPE</TD><TD>VARCHAR2(10)</TD><TD></TD><TD>New Drug Application Type. The type of new drug application approval.  New Drug Applications (NDA or innovator)  are ”N”.   Abbreviated New Drug Applications (ANDA or generic) are “A”.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>PROTEIN_CLASSIFICATION:</h2>
+    Table storing the protein family classifications for protein targets in ChEMBL (formerly in the target_class table)
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>PROTEIN_CLASS_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key. Unique identifier for each protein family classification.</TD></TR>
+        
+            <TR><TD></TD><TD>PARENT_ID</TD><TD>NUMBER</TD><TD></TD><TD>Protein_class_id for the parent of this protein family.</TD></TR>
+        
+            <TR><TD></TD><TD>PREF_NAME</TD><TD>VARCHAR2(500)</TD><TD></TD><TD>Preferred/full name for this protein family.</TD></TR>
+        
+            <TR><TD></TD><TD>SHORT_NAME</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Short/abbreviated name for this protein family (not necessarily unique).</TD></TR>
+        
+            <TR><TD></TD><TD>PROTEIN_CLASS_DESC</TD><TD>VARCHAR2(410)</TD><TD>NOT NULL</TD><TD>Concatenated description of each classification for searching purposes etc.</TD></TR>
+        
+            <TR><TD></TD><TD>DEFINITION</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>Definition of the protein family.</TD></TR>
+        
+            <TR><TD></TD><TD>CLASS_LEVEL</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Level of the class within the hierarchy (level 1 = top level classification)</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>RELATIONSHIP_TYPE:</h2>
+    Lookup table for assays.relationship_type column, showing whether assays are mapped to targets of the correct identity and species ('Direct') or close homologues ('Homologue')
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>RELATIONSHIP_TYPE</TD><TD>VARCHAR2(1)</TD><TD>NOT NULL</TD><TD>Relationship_type flag used in the assays table</TD></TR>
+        
+            <TR><TD></TD><TD>RELATIONSHIP_DESC</TD><TD>VARCHAR2(250)</TD><TD></TD><TD>Description of relationship_type flags</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>SITE_COMPONENTS:</h2>
+    Table defining the location of the binding sites in the binding_sites table. A binding site could be defined in terms of which protein subunits (components) are involved, the domains within those subunits to which the compound binds, and possibly even the precise residues involved. For a target where the binding site is at the interface of two protein subunits or two domains, there will be two site_components describing each of these subunits/domains.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>SITECOMP_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>SITE_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to binding_sites table.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>COMPONENT_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to the component_sequences table, indicating which molecular component of the target is involved in the binding site.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>DOMAIN_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to the domains table, indicating which domain of the given molecular component is involved in the binding site (where not known, the domain_id may be null).</TD></TR>
+        
+            <TR><TD></TD><TD>SITE_RESIDUES</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>List of residues from the given molecular component that make up the binding site (where not know, will be null).</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>SOURCE:</h2>
+    Table showing source from which ChEMBL data is derived (e.g., literature, deposited datasets, patents, drug or clinical candidate sources etc)
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>SRC_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Incremental numeric Identifier for each source (used in compound_records and assays tables). 
+If a source is removed,  this should be left empty. Does not auto-increment.</TD></TR>
+        
+            <TR><TD></TD><TD>SRC_DESCRIPTION</TD><TD>VARCHAR2(500)</TD><TD></TD><TD>Descriptive name for the source</TD></TR>
+        
+            <TR><TD></TD><TD>SRC_SHORT_NAME</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>A short name for each data source, for display purposes</TD></TR>
+        
+            <TR><TD></TD><TD>SRC_COMMENT</TD><TD>VARCHAR2(1200)</TD><TD></TD><TD>Additional notes on the source</TD></TR>
+        
+            <TR><TD></TD><TD>SRC_URL</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>URL(s) pointing to website(s) with relevant information about the source</TD></TR>
+        
+            <TR><TD></TD><TD>DDID_PATTERN</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Pattern used to construct RIDX and AIDX. E.g. TARGET_DATE_AUTHOR</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>STRUCTURAL_ALERT_SETS:</h2>
+    Table showing list of sets of structural alerts that have been included in COMPOUND_STRUCTURAL_ALERT table. It should be noted some alerts/alert sets are more permissive than others and may flag a large number of compounds. Results should be interpreted with care, depending on the use-case, and not treated as a blanket filter (e.g., around 50% of approved drugs have 1 or more alerts from these sets).
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>ALERT_SET_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Unique ID for the structural alert set</TD></TR>
+        
+            <TR><TD>UK</TD><TD>SET_NAME</TD><TD>VARCHAR2(100)</TD><TD>NOT NULL</TD><TD>Name (or origin) of the structural alert set</TD></TR>
+        
+            <TR><TD></TD><TD>PRIORITY</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Priority assigned to the structural alert set for display on the ChEMBL interface (priorities >=4 are shown by default).</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>STRUCTURAL_ALERTS:</h2>
+    Table storing a list of structural features (encoded as SMARTS) that are potentially undesirable in drug discovery context. It should be noted some alerts/alert sets are more permissive than others and may flag a large number of compounds. Results should be interpreted with care, depending on the use-case, and not treated as a blanket filter (e.g., around 50% of approved drugs have 1 or more alerts from these sets).
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>ALERT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key. Unique identifier for the structural alert</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>ALERT_SET_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to structural_alert_sets table indicating which set this particular alert comes from</TD></TR>
+        
+            <TR><TD>UK</TD><TD>ALERT_NAME</TD><TD>VARCHAR2(100)</TD><TD>NOT NULL</TD><TD>A name for the structural alert</TD></TR>
+        
+            <TR><TD>UK</TD><TD>SMARTS</TD><TD>VARCHAR2(4000)</TD><TD>NOT NULL</TD><TD>SMARTS defining the structural feature that is considered to be an alert</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>TARGET_COMPONENTS:</h2>
+    Links molecular target from the target_dictionary to the components they consist of (in the component_sequences table). For a protein complex or protein family target, for example, there will be multiple protein components in the component_sequences table.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>TID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the target_dictionary, indicating the target to which the components belong.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>COMPONENT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Foreign key to the component_sequences table, indicating which components belong to the target.</TD></TR>
+        
+            <TR><TD>PK</TD><TD>TARGCOMP_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key.</TD></TR>
+        
+            <TR><TD></TD><TD>HOMOLOGUE</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Indicates that the given component is a homologue of the correct component (e.g., from a different species) when set to 1. This may be the case if the sequence for the correct protein/nucleic acid cannot be found in sequence databases. A value of 2 indicates that the sequence given is a representative of a species group, e.g., an E. coli protein to represent the target of a broad-spectrum antibiotic.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>TARGET_DICTIONARY:</h2>
+    Target Dictionary containing all curated targets for ChEMBL. Includes both protein targets and non-protein targets (e.g., organisms, tissues, cell lines)
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>TID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Unique ID for the target</TD></TR>
+        
+            <TR><TD>FK</TD><TD>TARGET_TYPE</TD><TD>VARCHAR2(30)</TD><TD></TD><TD>Describes whether target is a protein, an organism, a tissue etc. Foreign key to TARGET_TYPE table.</TD></TR>
+        
+            <TR><TD></TD><TD>PREF_NAME</TD><TD>VARCHAR2(200)</TD><TD>NOT NULL</TD><TD>Preferred target name: manually curated</TD></TR>
+        
+            <TR><TD></TD><TD>TAX_ID</TD><TD>NUMBER</TD><TD></TD><TD>NCBI taxonomy id of target</TD></TR>
+        
+            <TR><TD></TD><TD>ORGANISM</TD><TD>VARCHAR2(150)</TD><TD></TD><TD>Source organism of molecuar target or tissue, or the target organism if compound activity is reported in an organism rather than a protein or tissue</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>CHEMBL_ID</TD><TD>VARCHAR2(20)</TD><TD>NOT NULL</TD><TD>ChEMBL identifier for this target (for use on web interface etc)</TD></TR>
+        
+            <TR><TD></TD><TD>SPECIES_GROUP_FLAG</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Flag to indicate whether the target represents a group of species, rather than an individual species (e.g., 'Bacterial DHFR'). Where set to 1, indicates that any associated target components will be a representative, rather than a comprehensive set.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>TARGET_RELATIONS:</h2>
+    Table showing relationships between different protein targets based on overlapping protein components (e.g., relationship between a protein complex and the individual subunits).
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>FK</TD><TD>TID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Identifier for target of interest (foreign key to target_dictionary table)</TD></TR>
+        
+            <TR><TD></TD><TD>RELATIONSHIP</TD><TD>VARCHAR2(20)</TD><TD>NOT NULL</TD><TD>Relationship between two targets (e.g., SUBSET OF, SUPERSET OF, OVERLAPS WITH)</TD></TR>
+        
+            <TR><TD>FK</TD><TD>RELATED_TID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Identifier for the target that is related to the target of interest (foreign key to target_dicitionary table)</TD></TR>
+        
+            <TR><TD>PK</TD><TD>TARGREL_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>TARGET_TYPE:</h2>
+    Lookup table for target types used in the target dictionary
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>TARGET_TYPE</TD><TD>VARCHAR2(30)</TD><TD>NOT NULL</TD><TD>Target type (as used in target dictionary)</TD></TR>
+        
+            <TR><TD></TD><TD>TARGET_DESC</TD><TD>VARCHAR2(250)</TD><TD></TD><TD>Description of target type</TD></TR>
+        
+            <TR><TD></TD><TD>PARENT_TYPE</TD><TD>VARCHAR2(25)</TD><TD></TD><TD>Higher level classification of target_type, allowing grouping of e.g., all 'PROTEIN' targets, all 'NON-MOLECULAR' targets etc.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>TISSUE_DICTIONARY:</h2>
+    Table storing information about tissues used in assays.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>TISSUE_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key, numeric ID for each tissue.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>UBERON_ID</TD><TD>VARCHAR2(15)</TD><TD></TD><TD>Uberon ontology identifier for this tissue.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>PREF_NAME</TD><TD>VARCHAR2(200)</TD><TD>NOT NULL</TD><TD>Name for the tissue (in most cases Uberon name).</TD></TR>
+        
+            <TR><TD>UK</TD><TD>EFO_ID</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>Experimental Factor Ontology identifier for the tissue.</TD></TR>
+        
+            <TR><TD>FK,UK</TD><TD>CHEMBL_ID</TD><TD>VARCHAR2(20)</TD><TD>NOT NULL</TD><TD>ChEMBL identifier for this tissue (for use on web interface etc)</TD></TR>
+        
+            <TR><TD></TD><TD>BTO_ID</TD><TD>VARCHAR2(20)</TD><TD></TD><TD>BRENDA Tissue Ontology identifier for the tissue.</TD></TR>
+        
+            <TR><TD></TD><TD>CALOHA_ID</TD><TD>VARCHAR2(7)</TD><TD></TD><TD>Swiss Institute for Bioinformatics CALOHA Ontology identifier for the tissue.</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>USAN_STEMS:</h2>
+    Table storing definitions for stems used in USANs (United States Adopted Names).
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>USAN_STEM_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Numeric primary key.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>STEM</TD><TD>VARCHAR2(100)</TD><TD>NOT NULL</TD><TD>Stem defined for use in United States Adopted Names.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>SUBGROUP</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>More specific subgroup of the stem defined for use in United States Adopted Names.</TD></TR>
+        
+            <TR><TD></TD><TD>ANNOTATION</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Meaning of the stem (e.g., the class of compound it applies to).</TD></TR>
+        
+            <TR><TD></TD><TD>STEM_CLASS</TD><TD>VARCHAR2(100)</TD><TD></TD><TD>Indicates whether stem is used as a prefix/infix/suffix/combined prefix and suffix</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>VARIANT_SEQUENCES:</h2>
+    Table storing information about mutant sequences and other variants used in assays. The sequence provided is a representative sequence incorporating the reported mutation/variant used in the assay - it is not necessarily the exact sequence used in the experiment.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>VARIANT_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key, numeric ID for each sequence variant; -1 for unclassified variants.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>MUTATION</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Details of variant(s) used, with residue positions adjusted to match provided sequence.</TD></TR>
+        
+            <TR><TD>UK</TD><TD>ACCESSION</TD><TD>VARCHAR2(25)</TD><TD></TD><TD>UniProt accesion for the representative sequence used as the base sequence (without variation).</TD></TR>
+        
+            <TR><TD></TD><TD>VERSION</TD><TD>NUMBER</TD><TD></TD><TD>Version of the UniProt sequence used as the base sequence.</TD></TR>
+        
+            <TR><TD></TD><TD>ISOFORM</TD><TD>NUMBER</TD><TD></TD><TD>Details of the UniProt isoform used as the base sequence where relevant.</TD></TR>
+        
+            <TR><TD></TD><TD>SEQUENCE</TD><TD>CLOB</TD><TD></TD><TD>Variant sequence formed by adjusting the UniProt base sequence with the specified mutations/variations.</TD></TR>
+        
+            <TR><TD></TD><TD>ORGANISM</TD><TD>VARCHAR2(200)</TD><TD></TD><TD>Organism from which the sequence was obtained.</TD></TR>
+        
+            <TR><TD></TD><TD>TAX_ID</TD><TD>NUMBER</TD><TD></TD><TD>NCBI Tax ID for the organism from which the sequence was obtained</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>VERSION:</h2>
+    Table showing release version and creation date for the database, and associated ontologies and packages.
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>NAME</TD><TD>VARCHAR2(50)</TD><TD>NOT NULL</TD><TD>Name of release version</TD></TR>
+        
+            <TR><TD></TD><TD>CREATION_DATE</TD><TD>DATE</TD><TD></TD><TD>Date database created</TD></TR>
+        
+            <TR><TD></TD><TD>COMMENTS</TD><TD>VARCHAR2(2000)</TD><TD></TD><TD>Description of release version</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+    <p><h2>WARNING_REFS:</h2>
+    Table storing references indicating the source of drug warning information
+    <br></p>
+    <p>
+        <TABLE>
+        <TR><TD><b>KEYS</b></TD><TD><b>COLUMN_NAME</b></TD><TD><b>DATA_TYPE</b></TD><TD><b>NULLABLE</b></TD><TD><b>COMMENT</b></TD></TR>
+        
+            <TR><TD>PK</TD><TD>WARNREF_ID</TD><TD>NUMBER</TD><TD>NOT NULL</TD><TD>Primary key for the warning reference</TD></TR>
+        
+            <TR><TD>FK</TD><TD>WARNING_ID</TD><TD>NUMBER</TD><TD></TD><TD>Foreign key to the drug_warning table</TD></TR>
+        
+            <TR><TD></TD><TD>REF_TYPE</TD><TD>VARCHAR2(50)</TD><TD></TD><TD>Type/source of reference</TD></TR>
+        
+            <TR><TD></TD><TD>REF_ID</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>Identifier for the reference in the source</TD></TR>
+        
+            <TR><TD></TD><TD>REF_URL</TD><TD>VARCHAR2(4000)</TD><TD></TD><TD>Full URL linking to the reference</TD></TR>
+        
+        </TABLE>
+        <br>
+        </p>
+
+</body>

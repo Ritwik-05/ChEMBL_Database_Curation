@@ -1,0 +1,25 @@
+# Python dependencies for ChEMBL 37 Curation Pipeline
+# Install: pip install -r requirements.txt
+
+# Core data processing (stdlib modules used: sqlite3, csv, gzip, pathlib, collections)
+# No heavy dependencies required for the core pipeline!
+
+# Optional: for Jupyter notebook analysis
+jupyter>=1.0.0
+ipykernel>=6.0.0
+notebook>=7.0.0
+
+# Optional: for advanced analysis beyond core pipeline
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Optional: cheminformatics
+# rdkit>=2022.03.1  # Install via conda: conda install -c rdkit rdkit
+
+# Optional: ChEMBL web API client (alternative to SQLite for small queries)
+# chembl-webresource-client>=0.10.8
+
+# Optional: progress bars
+tqdm>=4.65.0

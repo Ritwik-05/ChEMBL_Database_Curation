@@ -1,1 +1,62 @@
-DATA/
+# =============================================================================
+# .gitignore for ChEMBL_Database_Curation
+# =============================================================================
+
+# --- Large data files (DO NOT commit) ----------------------------------------
+data/raw/
+data/curated/*.tsv.gz
+data/curated/*.tsv
+/reports/*.tsv
+data/targets/*/
+!data/targets/README.md
+data/targets/targets_index.tsv
+!data/targets/.gitkeep
+/*.tsv
+# Keep directory structure
+!data/raw/.gitkeep
+!data/curated/.gitkeep
+!data/schema/.gitkeep
+*.gz
+# --- Logs (optional: keep or ignore) -----------------------------------------
+logs/*.log
+
+# --- Python artifacts --------------------------------------------------------
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# --- Jupyter ---------------------------------------------------------------
+.ipynb_checkpoints/
+*.ipynb_checkpoint
+
+# --- IDE files ---------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- OS files ---------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- Temporary files ---------------------------------------------------------
+*.tmp
+*.bak
+*.orig
+
+# Keep: schema docs (small), reports, scripts
+data/schema/*.tsv
+data/schema/*.pdf
+!data/schema/*.html
+!data/schema/*.txt
+!reports/*.md
+!reports/*.tsv
+!reports/*.json
