@@ -11,6 +11,10 @@ data/targets/*/
 !data/targets/README.md
 data/targets/targets_index.tsv
 !data/targets/.gitkeep
+Version2/data/targets/*/
+!Version2/data/targets/targets_index.tsv
+Version2/data/curated/*.tsv.gz
+Version2/logs/*.log
 /*.tsv
 # Keep directory structure
 !data/raw/.gitkeep
@@ -60,3 +64,6 @@ data/schema/*.pdf
 !reports/*.md
 !reports/*.tsv
 !reports/*.json
+
+*.tsv
+*.gz
