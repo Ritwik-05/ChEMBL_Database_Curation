@@ -1,0 +1,99 @@
+{
+  "manifest_version": "2.0",
+  "generated_timestamp": "2026-10-12T16:10:28.593140",
+  "git_commit": "fdb2a8d3bc92e3b68268cd76275d7bbedbe5723c",
+  "environment": {
+    "python_version": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:09:02) [GCC 11.2.0]",
+    "sqlite_version": "3.45.3",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+    "machine": "x86_64"
+  },
+  "database_provenance": {
+    "source": "EMBL-EBI ChEMBL 37",
+    "db_path": "data/raw/chembl_37.db",
+    "access_mode": "read_only"
+  },
+  "curation_summary_metrics": {
+    "qualified_single_protein_targets": 880,
+    "registered_drugs_and_clinical_candidates": 19308,
+    "indexed_assay_protocols": 290451
+  },
+  "scripts_checksums": {
+    "Version2/scripts/02_explore_schema.py": {
+      "sha256": "87be461f43f308c15f318ef30b0afc36a6e6445106f141a274b8c27fac831fcc",
+      "size_bytes": 4761
+    },
+    "Version2/scripts/03_curate_bioactivity.py": {
+      "sha256": "dce9fba0f06f1219d348c69c1a25043f5907949932ad42956a490ebfc0deb8b2",
+      "size_bytes": 8873
+    },
+    "Version2/scripts/04_curate_target_interactions.py": {
+      "sha256": "f93b83febb7ce51d62d32569c08563f7ead215113ee6509d541dc791514f7d52",
+      "size_bytes": 14394
+    },
+    "Version2/scripts/05_generate_report.py": {
+      "sha256": "41c2e9e2f7238440f7e7b47b3b1423a23a7632d90cc4da3b828ed09a8063528e",
+      "size_bytes": 7536
+    },
+    "Version2/scripts/06_extract_well_characterized_targets.py": {
+      "sha256": "510a48de4c7e9cfeea1b85ec1cfac1544b254e2ce053ab0e78f71b28497a1a19",
+      "size_bytes": 16918
+    },
+    "Version2/scripts/07_extract_assay_conditions.py": {
+      "sha256": "a6c35d0fa26cffd9615724e44b880afcd2ac79f183a037500955b62f9479403b",
+      "size_bytes": 19716
+    }
+  },
+  "outputs_checksums": {
+    "Version2/data/schema/chembl_37_schema_report.tsv": {
+      "sha256": "a92514cf14f20ac0a5c97fef3843705553a4b69af32c2a02bfa1cdf5b6117150",
+      "size_bytes": 13769,
+      "modified": "2026-10-12T15:07:49.984679"
+    },
+    "Version2/reports/bioactivity_rejection_ledger.tsv": {
+      "sha256": "304a9311b659e6ec574c521616543d0ca8066b8c6f11e81c0261359cd20ae2e4",
+      "size_bytes": 1003,
+      "modified": "2026-10-12T16:03:08.689075"
+    },
+    "Version2/data/curated/chembl_37_drug_dictionary.tsv": {
+      "sha256": "a1586ca392745c765322ade6d6c54863b6748ebbdc47e30e6dcc2739047cca1c",
+      "size_bytes": 2240278,
+      "modified": "2026-10-12T16:03:53.743483"
+    },
+    "Version2/data/curated/chembl_37_target_components.tsv": {
+      "sha256": "0e6d4284d5f0befdb28e10cfb5f9d6e968779181c046d947a69c3b26f83ff665",
+      "size_bytes": 2346400,
+      "modified": "2026-10-12T16:03:53.839128"
+    },
+    "Version2/data/curated/chembl_37_protein_classification.tsv": {
+      "sha256": "1e329185d00e095c2c635754da60ded9337f87f15e29f00901ce21ba24a08e72",
+      "size_bytes": 84308,
+      "modified": "2026-10-12T16:03:53.842396"
+    },
+    "Version2/data/curated/chembl_37_target_variants.tsv": {
+      "sha256": "bd5e3538878cd99dcf6aa5be4bc6e07a9dabb01cad327cecdf88e8e800eefc8c",
+      "size_bytes": 109571,
+      "modified": "2026-10-12T16:03:53.849427"
+    },
+    "Version2/data/targets/targets_index.tsv": {
+      "sha256": "6e222a86ecb7e4d66ccbfa38f5b8358e51f1868868a7fbaa4f5f83d5e881f66c",
+      "size_bytes": 127789,
+      "modified": "2026-10-12T15:57:01.304117"
+    },
+    "Version2/reports/well_characterized_proteins_drug_stats_v2.tsv": {
+      "sha256": "0d3b25166330de47733f08e04cdefb91fdb1f1122d781ac2259cfc7c1ec2632c",
+      "size_bytes": 775318,
+      "modified": "2026-10-12T15:57:01.313319"
+    },
+    "Version2/data/curated/assay_conditions/assay_protocols_conditions_index_v2.tsv": {
+      "sha256": "b9a572b59f25477db8a0d1fb4240b7bbbc387c40cffa8b8e4edd8e5ff44b6258",
+      "size_bytes": 31041839,
+      "modified": "2026-10-12T16:02:37.942599"
+    },
+    "Version2/reports/assay_conditions_stats_v2.tsv": {
+      "sha256": "cba7fc359c2215937d7187e75e54b9c89730a34b9669344dab9edfea8c11d101",
+      "size_bytes": 2023,
+      "modified": "2026-10-12T16:02:37.942885"
+    }
+  }
+}
