@@ -5,14 +5,13 @@
 > **Release Date**: October 2026  
 > **Host Database**: ChEMBL 37 (EMBL-EBI SQLite, 29.0 GB raw)  
 > **Repository Directory**: `Version2/`  
-> **Audit Status**: Fully corrected in response to Reviewer 2 Critical Audit (Findings C01–C10, H01–H10)  
-> **Compliance**: Scientific Quality Council Standards (`AGENTS.md`)
+
 
 ---
 
 ## 1. Executive Summary & Purpose of Version 2 Re-engineering
 
-Version 1 established the initial database extraction architecture. However, an independent audit (Reviewer 2) revealed critical scientific and numerical failure modes that compromised the reliability of the derived datasets for machine learning. 
+Version 1 established the initial database extraction architecture. However, an independent audit revealed critical scientific and numerical failure modes that compromised the reliability of the derived datasets for machine learning. 
 
 Version 2 re-engineers the entire pipeline to address all reviewer critiques without overwriting Version 1 assets:
 - **Unified Target Qualification & Export**: Eliminates the mismatch where targets qualified using invalid records and exported low-confidence assays. A single, strict predicate is enforced across both stages, identifying exactly **880 data-rich single-protein targets** ($\ge 500$ unique compounds).
@@ -28,9 +27,9 @@ Version 2 re-engineers the entire pipeline to address all reviewer critiques wit
 
 ---
 
-## 2. Itemized Resolution of Reviewer 2 Findings
+## 2. Itemized Resolution of  Findings
 
-| Finding ID | Reviewer 2 Critique | Version 1 Defect | Version 2 Resolution |
+| Finding ID |  Critique | Version 1 Defect | Version 2 Resolution |
 |:---|:---|:---|:---|
 | **C01** | Target qualification vs. export eligibility mismatch | Qualification counted invalid records; export query omitted confidence filter. | Unified eligible-record SQL predicate applied across both qualification and export: `td.target_type = 'SINGLE PROTEIN' AND a.confidence_score >= 8 AND act.standard_value IS NOT NULL AND (validity is NULL or valid)`. 880 targets qualified. |
 | **C02** | Relation syntax & inactivity handling | Missing relations coerced to `=`; `~` treated as exact; relations inferred as inactive. | Preserves original relations. Missing relations exported as `unspecified`. Activity status (Active, Inactive, Inconclusive) evaluated independently from relation syntax. |
