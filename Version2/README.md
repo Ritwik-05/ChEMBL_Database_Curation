@@ -1,6 +1,5 @@
 # ChEMBL Database Curation — Version 2 (Audited & Re-engineered)
 
-A fully audited, scientifically validated curation release of **ChEMBL 37** addressing all critical, major, and engineering findings raised in the Reviewer 2 Audit.
 
 ---
 
